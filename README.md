@@ -9,6 +9,7 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)<br>
 *Witty Note: "walo" is from the tagalog word of the number 8.*
 
 # Game samples
+
 ## Space Invaders
 <img src="sample-images/Space_Invaders.png" width="640px" height="320px">
 
@@ -16,6 +17,7 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)<br>
 <img src="sample-images/Breakout.png" width="640px" height="320px">
 
 # Usage:
+
 To download this repo, run this:
 ```bash 
 git clone https://github.com/diamant3/chip-walo.git
@@ -24,7 +26,7 @@ After you download, run this:
 ```bash
 cd chip-walo 
 ```
-### Build:
+## Build:
 If you want to build the object files only, run this:
 ```bash
 make
@@ -33,8 +35,10 @@ If you want the build the executable, run this:
 ```bash
 make && make all
 ```
+
 *Note: The executable file is located in ``` bin ``` folder.*
-### Run:
+
+## Run:
 Two ways to run this:
 ### Windows
 ```bash
@@ -46,6 +50,7 @@ chip-walo PATH/OF/THE/ROM
 Untested - Under testing
 ```
 # :heart: Credits:
+
 ![SDL](https://www.libsdl.org/) - My graphics API<br>
 ![Cow God](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM8) - Heavily used for the references of the op codes<br>
 ![Wikipedia](https://en.wikipedia.org/wiki/CHIP-8) - Another reference for op codes<br>
