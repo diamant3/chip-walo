@@ -8,9 +8,10 @@ CHIP-8 is an interpreted programming language which was initially used in the la
 Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)<br>
 *Witty Note: "walo" is from the tagalog word of the number 8.*
 
-# Game samples:
+# Game samples
 ## Space Invaders
 <img src="sample-images/Space_Invaders.png" width="640px" height="320px">
+
 ## Breakout
 <img src="sample-images/Breakout.png" width="640px" height="320px">
 
