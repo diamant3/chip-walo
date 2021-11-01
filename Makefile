@@ -1,8 +1,6 @@
 CC = gcc
 CFLAGS = -g -Wall -Wextra -Wpedantic
 
-#INC = -I include
-#LIBS = -L lib
 SDL_FLAGS = -lmingw32 -lSDL2main -lSDL2 -L lib -I include
 
 OBJS = chip-walo.o system.o peripherals.o
