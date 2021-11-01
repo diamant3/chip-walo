@@ -44,6 +44,7 @@ Two ways to run this:
 ```
 chip-walo PATH/OF/THE/ROM
 ```
+**Note: The sdl2 is pre-installed, just build and run. the ``` sdl2.dll ``` file is required.**
 
 ### Linux
 ```
@@ -51,3 +52,8 @@ Untested
 ```
 
 # Credits
+https://en.wikipedia.org/wiki/CHIP-8 - For checking correct op code<br>
+http://devernay.free.fr/hacks/chip8/C8TECH10.HTM8 Heavily used for the references and guide of correct op code<br>
+https://multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/ - 1/2 of code is mostly from here.<br>
+
+
