@@ -1,10 +1,12 @@
 # CHIP-WALO
+
 **CHIP-8 Emulator written in C**
 
 # Intro
 CHIP-8 is an interpreted programming language which was initially used in the late 1970s. It was made to allow more easily programed game for those computers. All programs written in CHIP-8 are run on a virtual machine which interprets each instruction.
 
 Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
+Witty Note: "walo" is from the tagalog word of the number 8.
 
 # Samples
 ## Space Invaders
