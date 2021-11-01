@@ -1,10 +1,12 @@
 <img src="sample-images/chip-walo.gif" width="640px" height="320px">
 
 # CHIP-WALO
+
 ![C](https://img.shields.io/badge/Code-C-green?style=flat-square)
 ![SDL2](https://img.shields.io/badge/SDL-2.0.16-blue?style=flat-square)
 
 # Introduction:
+
 CHIP-8 is an interpreted programming language which was initially used in the late 1970s. It was made to allow more easily programed game for those computers. All programs written in CHIP-8 are run on a virtual machine which interprets each instruction.
 
 Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)<br>
@@ -20,37 +22,81 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)<br>
 
 # Usage:
 
+**Keyboard Control**
+
+<table>
+  <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>4</td>
+  </tr>
+  <tr>
+      <td>Q</td>
+      <td>W</td>
+      <td>E</td>
+      <td>R</td>
+  </tr>
+  <tr>
+      <td>A</td>
+      <td>S</td>
+      <td>D</td>
+      <td>F</td>
+  </tr>
+  <tr>
+      <td>Z</td>
+      <td>X</td>
+      <td>C</td>
+      <td>V</td>
+  </tr>
+</table>
+
+
+# Build & run:
+
 To download this repo, run this:
+
 ```bash 
 git clone https://github.com/diamant3/chip-walo.git
 ``` 
 After you download, run this:
+
 ```bash
 cd chip-walo 
 ```
-## Build:
+## Build
+
 If you want to build the object files only, run this:
+
 ```bash
 make
 ``` 
 If you want the build the executable, run this:
+
 ```bash
 make && make all
 ```
 
 *Note: The executable file is located in ``` bin ``` folder.*
 
-## Run:
+## Run
+
 Two ways to run this:
+
 ### Windows
+
 ```bash
 chip-walo PATH/OF/THE/ROM
 ```
+
 *Note: The sdl2 is pre-installed, just build and run. the ```SDL2.dll``` file in ```bin``` directory is required. do not delete.*
+
 ### Linux
+
 ```bash
 Untested - Under testing
 ```
+
 # :heart: Credits:
 
 [SDL](https://www.libsdl.org/) - My graphics API<br>
