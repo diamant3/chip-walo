@@ -1,4 +1,5 @@
-<img src="sample-images/chip-walo.gif">
+<img src="sample-images/chip-walo.gif" width="640px" height="320px">
+
 # CHIP-WALO
 ![C](https://img.shields.io/badge/Code-C-green?style=flat-square)
 ![SDL2](https://img.shields.io/badge/SDL-2.0.16-blue?style=flat-square)
