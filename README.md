@@ -58,5 +58,5 @@ Untested - Under testing
 [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8) - Another reference for op codes<br>
 [Multigesture](https://multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/) - 1/4 of my code is mostly from here.<br>
 [Tobiasvl](https://tobiasvl.github.io/blog/write-a-chip-8-emulator/)- Good explanation about chip-8<br>
-[Chip-8 ](tps://chip-8.github.io/links/) - Chip-8 Resources<br>
+[Chip-8](https://chip-8.github.io/links/) - Chip-8 Resources<br>
 [Zophar.net](https://www.zophar.net/pdroms/chip8.html) - chip-8 ROMS<br>
