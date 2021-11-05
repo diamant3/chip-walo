@@ -1,28 +1,29 @@
-<img src="sample-images/chip-walo.gif" width="640px" height="320px">
+<img src="assets/chip-walo.gif">
 
 # CHIP-WALO
 
-![C](https://img.shields.io/badge/Code-C-green?style=flat-square)
-![SDL2](https://img.shields.io/badge/SDL-2.0.16-blue?style=flat-square)
+![C](https://img.shields.io/badge/Code-C-green?style=for-the-badge)
+![SDL2](https://img.shields.io/badge/SDL2-blue?style=for-the-badge)
 
-# Introduction:
+# Intro
 
-CHIP-8 is an interpreted programming language which was initially used in the late 1970s. It was made to allow more easily programed game for those computers. All programs written in CHIP-8 are run on a virtual machine which interprets each instruction.
+*CHIP-8 is an interpreted programming language which was initially used in the late 1970s. It was made to allow more easily programed game for those computers. All programs written in CHIP-8 are run on a virtual machine which interprets each instruction.*
 
-Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)<br>
-*Witty Note: "walo" is from the tagalog word of the number 8.*
+Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
+
+>"WALO" is from the tagalog word of the number 8.
 
 # Game samples
 
 ## Space Invaders
-<img src="sample-images/Space_Invaders.png" width="640px" height="320px">
+
+<img src="assets/Space_Invaders.png">
 
 ## Breakout
-<img src="sample-images/Breakout.png" width="640px" height="320px">
 
-# Usage:
+<img src="assets/Breakout.png">
 
-**Keyboard Control**
+# Usage
 
 <table>
   <tr>
@@ -51,33 +52,30 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)<br>
   </tr>
 </table>
 
+> This is the key mappings of the chip-walo, use keyboard to control.
 
-# Build & run:
+# Build/Run:
 
 To download this repo, run this:
 
 ```bash 
 git clone https://github.com/diamant3/chip-walo.git
 ``` 
-After you download, run this:
+After you download:
 
 ```bash
 cd chip-walo 
 ```
+
 ## Build
 
-If you want to build the object files only, run this:
+Build the executable file:
 
 ```bash
 make
-``` 
-If you want the build the executable, run this:
-
-```bash
-make && make all
 ```
 
-*Note: The executable file is located in ``` bin ``` folder.*
+>Note: The executable file is located in ``` bin ``` folder.
 
 ## Run
 
@@ -89,20 +87,20 @@ Two ways to run this:
 chip-walo PATH/OF/THE/ROM
 ```
 
-*Note: The sdl2 is pre-installed, just build and run. the ```SDL2.dll``` file in ```bin``` directory is required. do not delete.*
+>Download first the [32-bit runtime binary](https://www.libsdl.org/release/SDL2-2.0.16-win32-x86.zip) from [SDL2](https://www.libsdl.org/) and put it in the bin folder.
 
 ### Linux
 
 ```bash
-Untested - Under testing
+Untested
 ```
 
-# :heart: Credits:
+# :heart: Credits
 
-[SDL](https://www.libsdl.org/) - My graphics API<br>
-[Cowgod](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM) - Heavily used for the references of the op codes<br>
-[Wikipedia](https://en.wikipedia.org/wiki/CHIP-8) - Another reference for op codes<br>
+[SDL](https://www.libsdl.org/) - graphics API that i used to make this.<br>
+[Cowgod](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM) - Heavily used for the references of the op codes.<br>
+[Wikipedia](https://en.wikipedia.org/wiki/CHIP-8) - Another reference for op codes.<br>
 [Multigesture](https://multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/) - 1/4 of my code is mostly from here.<br>
-[Tobiasvl](https://tobiasvl.github.io/blog/write-a-chip-8-emulator/)- Good explanation about chip-8<br>
-[Chip-8](https://chip-8.github.io/links/) - Chip-8 Resources<br>
-[Zophar.net](https://www.zophar.net/pdroms/chip8.html) - chip-8 ROMS<br>
+[Tobiasvl](https://tobiasvl.github.io/blog/write-a-chip-8-emulator/)- Clear explanation about chip-8.<br>
+[Chip-8](https://chip-8.github.io/links/) - Chip-8 Resources.<br>
+[Zophar.net](https://www.zophar.net/pdroms/chip8.html) - chip-8 ROMS.<br>
