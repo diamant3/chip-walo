@@ -54,7 +54,7 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
 > This is the key mappings of the chip-walo, use keyboard to control.
 
-# Build/Run:
+# Build/Run
 
 To download this repo, run this:
 
