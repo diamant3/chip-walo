@@ -108,6 +108,6 @@ Untested
 
 # License
 
-```lib``` and ```include/SDL2``` folders are from SDL2. 
+```lib``` and ```include/SDL2``` folders are contained source codes from SDL2. 
 
 SDL 2.0 and newer are available under the zlib license: Please see the [SDL2 - License](https://www.libsdl.org/license.php).
