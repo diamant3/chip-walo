@@ -98,10 +98,16 @@ Untested
 
 # :heart: Credits
 
-[SDL](https://www.libsdl.org/) - graphics API that i used to make this.<br>
+[SDL2](https://www.libsdl.org/) - graphics API that i used to make this.<br>
 [Cowgod](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM) - Heavily used for the references of op codes.<br>
 [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8) - Another reference for op codes.<br>
 [Multigesture](https://multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/) - the emulation of graphics of chip-8 is mostly from here.<br>
 [Tobiasvl](https://tobiasvl.github.io/blog/write-a-chip-8-emulator/)- Clear explanation about chip-8.<br>
 [Chip-8](https://chip-8.github.io/links/) - Chip-8 Resources.<br>
 [Zophar.net](https://www.zophar.net/pdroms/chip8.html) - chip-8 ROMS.<br>
+
+# License
+
+```lib``` and ```include/SDL2``` folders are from SDL2. 
+
+SDL 2.0 and newer are available under the zlib license: Please see the [SDL2 - License](https://www.libsdl.org/license.php).
