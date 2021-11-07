@@ -10,7 +10,7 @@ INCLUDE = -I include
 SRCS = chip-walo.c system.c peripherals.c
 OUT = chip-walo
 
-BUILD = $(CC) $(SRCS) -o bin\$(OUT) $(CFLAGS)
+BUILD = $(CC) $(SRCS) -o bin/$(OUT) $(CFLAGS)
 
 $(shell mkdir -p bin)
 
