@@ -58,8 +58,10 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
 ## Linux
 
-Install the pre-requisites:
+Pre-requisites:
 * git
+* gcc
+* make
 * libsdl2-2.0
 * libsdl2-dev
 
@@ -88,13 +90,19 @@ chip-walo PATH/OF/THE/ROM
 
 ## Windows
 
+Pre-requisites:
+* gcc
+* make
+
 You can download here [chip-walo](https://github.com/diamant3/chip-walo/archive/refs/heads/main.zip).
 
->Download first the 32-bit runtime binary(SDL2.dll) from [SDL2](https://www.libsdl.org/download-2.0.php) and put it in the ``` bin ``` folder.
+Extract the zip file then run this inside the folder:
 
 ```bash
 make
 ```
+
+>Download and extract the [runtime binary(32-bit Windows)](https://www.libsdl.org/download-2.0.php) and put the ``` SDL2.dll ``` in the ``` bin ``` folder.
 
 *Note: The executable file is located in ``` bin ``` folder.*
 
