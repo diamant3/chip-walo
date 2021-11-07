@@ -54,46 +54,52 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
 > This is the key mappings of the chip-walo, use keyboard to control.
 
-# Build/Run
+# Building from source
 
-To download this repo, run this:
+## Linux
+
+Install the pre-requisites:
+* git
+* libsdl2-2.0
+* libsdl2-dev
+
+Download the repo:
 
 ```bash 
 git clone https://github.com/diamant3/chip-walo.git
 ``` 
 
-After you download:
+After you download, run this:
 
 ```bash
 cd chip-walo 
 ```
-
-## Build
-
-Build the executable file:
+and this: 
 
 ```bash
 make
 ```
 
->Note: The executable file is located in ``` bin ``` folder.
-
-## Run
-
-Two ways to run this:
-
-### Windows
+*Note: The executable file is located in ``` bin ``` folder.*
 
 ```bash
 chip-walo PATH/OF/THE/ROM
 ```
 
->Download first the 32-bit runtime binary from [SDL2](https://www.libsdl.org/download-2.0.php) and put it in the ``` bin ``` folder.
+## Windows
 
-### Linux
+You can download here [chip-walo](https://github.com/diamant3/chip-walo/archive/refs/heads/main.zip).
+
+>Download first the 32-bit runtime binary(SDL2.dll) from [SDL2](https://www.libsdl.org/download-2.0.php) and put it in the ``` bin ``` folder.
 
 ```bash
-Untested
+make
+```
+
+*Note: The executable file is located in ``` bin ``` folder.*
+
+```bash
+chip-walo PATH/OF/THE/ROM
 ```
 
 # :heart: Credits
