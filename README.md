@@ -88,7 +88,7 @@ Two ways to run this:
 chip-walo PATH/OF/THE/ROM
 ```
 
->Download first the 32-bit runtime binary from [SDL2](https://www.libsdl.org/) and put it in the ``` bin ``` folder.
+>Download first the 32-bit runtime binary from [SDL2](https://www.libsdl.org/download-2.0.php) and put it in the ``` bin ``` folder.
 
 ### Linux
 
