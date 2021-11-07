@@ -11,9 +11,9 @@ int main(int argc, char *argv[])
     if(argc > 1) 
     {
         if(argc == 2) { romLoad(argv[1]); }
-        else { printf("please input single rom only."); return 1; }
+        else { printf("please input single rom only.\n"); return 1; }
     }
-    else { printf("Input Rom, Try again."); return 1; }
+    else { printf("Input Rom, Try again.\n"); return 1; }
 
     // Initialization
     initSys();

@@ -143,7 +143,7 @@ void initSound()
     audioDevice = SDL_OpenAudioDevice(NULL, 0, audioSpec, NULL, 0);
     if(audioDevice != 0)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "Failed to open audio: %s", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "Failed to open audio: %s\n", SDL_GetError());
     }
 }
 
