@@ -84,9 +84,13 @@ void cpuCycle()
 
                 // Return from a subroutine
                 case 0xEE:
+                    --chip8.sp;
                     chip8.pc = chip8.stack[chip8.sp];
-                    chip8.sp--;
                     chip8.pc += 2;
+                break;
+
+                default:
+                    printf("Unknown op code: 0x%x\n", chip8.opcode);
                 break;
             }
         break;
@@ -98,8 +102,8 @@ void cpuCycle()
 
         // Call subroutine at NNN
         case 0x2000:
-            chip8.sp++;
             chip8.stack[chip8.sp] = chip8.pc;
+            ++chip8.sp;
             chip8.pc = NNN;
         break;
 
@@ -227,6 +231,10 @@ void cpuCycle()
                     chip8.pc += 2;
                 }
                 break;
+
+                default:
+                    printf("Unknown op code: 0x%x\n", chip8.opcode);
+                break;
             }
         break;
 
@@ -307,6 +315,10 @@ void cpuCycle()
                     }
                     chip8.pc += 2;
                 break;
+
+                default:
+                    printf("Unknown op code: 0x%x\n", chip8.opcode);
+                break;
             }
         break;
 
@@ -358,9 +370,9 @@ void cpuCycle()
 
                 // Store BCD representation of register Vx in memory locations I, I+1, and I+2
                 case 0x33:
-                    chip8.memory[chip8.I] = chip8.V[vx] / 100;
+                    chip8.memory[chip8.I] = (chip8.V[vx] / 100) % 10;
                     chip8.memory[chip8.I + 1] = (chip8.V[vx] / 10) % 10;
-                    chip8.memory[chip8.I + 2] = (chip8.V[vx] % 100) % 10;
+                    chip8.memory[chip8.I + 2] = chip8.V[vx] % 10;
 
                     chip8.pc += 2;
                 break;
@@ -383,6 +395,10 @@ void cpuCycle()
                     }
 
                     chip8.pc += 2;
+                break;
+
+                default:
+                    printf("Unknown op code: 0x%x\n", chip8.opcode);
                 break;
             }
         break;
