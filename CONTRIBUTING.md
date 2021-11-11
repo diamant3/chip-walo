@@ -5,8 +5,3 @@
 # Contributing :heart:
 
 <p align="center">You can contribute by submitting your PR(Pull Request) and i gonna review that ASAP. Thank you!</p>
-
-*Note: I'm beginner in open source.*
- 
- 
-
