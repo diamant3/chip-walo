@@ -1,4 +1,4 @@
-<img src="assets/chip-walo.gif">
+<p align="center"><img src="assets/chip-walo.gif"></p>
 
 # CHIP-WALO
 
@@ -123,3 +123,11 @@ chip-walo PATH/OF/THE/ROM
 ```lib``` and ```include/SDL2``` folders are contained source codes from SDL2. 
 
 SDL 2.0 and newer are available under the zlib license: Please see the [SDL2 - License](https://www.libsdl.org/license.php).
+
+# Contribute
+
+Accepting contribution! :smiley:
+
+*Please read the [Contributing](https://github.com/diamant3/chip-walo/CONTRIBUTING.md).*
+
+*Please read the [Code of Conduct](https://github.com/diamant3/chip-walo/CODE_OF_CONDUCT.md).*
