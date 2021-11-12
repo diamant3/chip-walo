@@ -128,6 +128,6 @@ SDL 2.0 and newer are available under the zlib license: Please see the [SDL2 - L
 
 Accepting contribution! :smiley:
 
-*Please read the [Contributing](https://github.com/diamant3/chip-walo/CONTRIBUTING.md).*
+*Please read the [Contributing](https://github.com/diamant3/chip-walo/blob/main/CONTRIBUTING.md).*
 
-*Please read the [Code of Conduct](https://github.com/diamant3/chip-walo/CODE_OF_CONDUCT.md).*
+*Please read the [Code of Conduct](https://github.com/diamant3/chip-walo/blob/main/CODE_OF_CONDUCT.md).*
