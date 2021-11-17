@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g3 -Os
+CFLAGS = -Os
 
 SDL_WINDOWS = -lmingw32 -lSDL2main -lSDL2 
 SDL_LINUX = -lm -lSDL2
