@@ -15,7 +15,7 @@
 #define KEY_LENGTH    16
 
 // Functions
-void romLoad(const char *rom);
+int romLoad(const char *rom);
 void cpuCycle(); 
 void initSys();
 

@@ -40,12 +40,17 @@ void initSys()
     }
 }
 
-void romLoad(const char *rom)
+int romLoad(const char *rom)
 {
     unsigned short romSize;
     char *romBuffer;
-
-    FILE *file = fopen(rom, "rb");
+    FILE *file;
+    
+    // Check if file exist
+    if((file = fopen(rom, "rb")) == NULL)
+    {
+        return 1;
+    }
 
     // Get the rom size
     fseek(file, 0, SEEK_END);
@@ -54,9 +59,12 @@ void romLoad(const char *rom)
     // Get the rom buffer
     fseek(file, 0, SEEK_SET);
     romBuffer = (char *) malloc(sizeof(char) * (romSize + 1));
-
-    fread(romBuffer, romSize, 1, file);
-    fclose(file);
+    if(romBuffer == NULL || (fread(romBuffer, 1, romSize, file)) < 1)
+    {
+        fclose(file);
+        free(romBuffer);
+        return 1;
+    }
 
     // Load the rom to memory
     for(int data = 0; data < romSize; data++)
@@ -64,6 +72,7 @@ void romLoad(const char *rom)
         chip8.memory[START_ADDRESS + data] = romBuffer[data];
     }
 
+    fclose(file);
     free(romBuffer);
 }
 
