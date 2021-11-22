@@ -13,6 +13,14 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
 >"WALO" is from the tagalog word of the number 8.
 
+# Features
+
+<ul>
+  <li>Working sound system</li>
+  <li>Cross-platform(Windows/Linux)</li>
+</ul>
+
+
 # Game samples
 
 ## Space Invaders
