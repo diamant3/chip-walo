@@ -134,12 +134,6 @@ chip-walo PATH/OF/THE/ROM
 [Chip-8](https://chip-8.github.io/links/) - Chip-8 Resources.<br>
 [Zophar.net](https://www.zophar.net/pdroms/chip8.html) - chip-8 ROMS.<br>
 
-# License
-
-```lib``` and ```include/SDL2``` folders are contained source codes from SDL2. 
-
-SDL 2.0 and newer are available under the zlib license: Please see the [SDL2 - License](https://www.libsdl.org/license.php).
-
 # Contribution
 
 Accepting any contribution! :smiley:
