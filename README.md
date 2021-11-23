@@ -140,9 +140,9 @@ chip-walo PATH/OF/THE/ROM
 
 SDL 2.0 and newer are available under the zlib license: Please see the [SDL2 - License](https://www.libsdl.org/license.php).
 
-# Contribute
+# Contribution
 
-Accepting contribution! :smiley:
+Accepting any contribution! :smiley:
 
 *Please read the [Contributing](https://github.com/diamant3/chip-walo/blob/main/CONTRIBUTING.md).*
 
