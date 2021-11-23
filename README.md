@@ -82,7 +82,7 @@ Extract the zip file then run this inside the folder:
 make
 ```
 
-*Note: No need for ```SDL2.dll``` *
+*Note: No need for ```SDL2.dll```*
 
 # Usage
 
