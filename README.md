@@ -59,15 +59,22 @@ and this:
 make
 ```
 
-*Note: The executable file is located in ``` bin ``` folder.*
-
 ## Windows
 
 Pre-requisites:
 * gcc
 * make
+* scoop
 
-You can download here [chip-walo](https://github.com/diamant3/chip-walo/archive/refs/heads/main.zip).
+**Install scoop first**, refer to this guide to install [scoop](https://scoop.sh/).
+
+After you install the scoop, run this:
+
+```bash
+scoop bucket add extras && scoop install sdl2
+```
+
+Download the [chip-walo](https://github.com/diamant3/chip-walo/archive/refs/heads/main.zip).
 
 Extract the zip file then run this inside the folder:
 
@@ -75,9 +82,7 @@ Extract the zip file then run this inside the folder:
 make
 ```
 
->Download and extract the [runtime binary(32-bit Windows)](https://www.libsdl.org/download-2.0.php) and put the ``` SDL2.dll ``` in the ``` bin ``` folder.
-
-*Note: The executable file is located in ``` bin ``` folder.*
+*Note: No need for ```SDL2.dll``` *
 
 # Usage
 
@@ -112,6 +117,8 @@ make
 
 ## Run
 
+*Note: The executable file is located in ``` bin ``` folder.*
+
 ```bash
 chip-walo PATH/OF/THE/ROM
 ```
@@ -119,6 +126,7 @@ chip-walo PATH/OF/THE/ROM
 # :heart: Credits
 
 [SDL2](https://www.libsdl.org/) - graphics API that i used to make this.<br>
+[scoop](https://scoop.sh/) - This is i used to fix the sdl2 dependencies.<br>
 [Cowgod](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM) - Heavily used for the references of op codes.<br>
 [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8) - Another reference for op codes.<br>
 [Multigesture](https://multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/) - the emulation of graphics of chip-8 is mostly from here.<br>
