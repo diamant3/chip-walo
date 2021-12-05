@@ -15,9 +15,7 @@ OUT  = chip-walo
 
 BUILD = $(CC) $(SRCS) -o bin/$(OUT) $(CFLAGS)
 
-$(shell rd /S /Q bin) 
 $(shell mkdir bin)
-
 ifeq ($(OS), Windows_NT)
 	BUILD += $(SDL_WINDOWS) $(LIBS) $(INCLUDE)
 else
