@@ -1,33 +1,19 @@
-#include "headers/system.h"
-#include "headers/peripherals.h"
+#include "../header/system.h"
+#include "../header/peripherals.h"
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <math.h>
 
-extern Processor chip8;
-
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Texture *texture = NULL;
-SDL_Event event;
 SDL_Rect rect;
-SDL_AudioSpec *audioSpec = NULL;
-SDL_AudioDeviceID audioDevice = 0;
-int sampleNR;
-int quit = 0;
 
-SDL_Scancode keymap[KEY_LENGTH] = {
-  SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, // 1 2 3 4
-  SDL_SCANCODE_Q, SDL_SCANCODE_W, SDL_SCANCODE_E, SDL_SCANCODE_R, // q w e r
-  SDL_SCANCODE_A, SDL_SCANCODE_S, SDL_SCANCODE_D, SDL_SCANCODE_F, // a s d f
-  SDL_SCANCODE_Z, SDL_SCANCODE_X, SDL_SCANCODE_C, SDL_SCANCODE_V  // z x c v
-};
-
-// START GRAPHICS SECTION
-
-void initPeripherals()
+// Initialize for window and renderer
+void init_peripherals()
 {
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
+    int err = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+    if(err)
     {
         printf("SDL_Init failed: %s\n", SDL_GetError());
     }
@@ -46,9 +32,14 @@ void initPeripherals()
         -1,
         0
     );
+
+    if(window == NULL || renderer == NULL) {
+        printf("SDL window creation failed: %s\n", SDL_GetError());
+    }
 }
 
-void drawGraphics()
+// Draw a pixel
+void draw_graphics()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -68,8 +59,8 @@ void drawGraphics()
     SDL_RenderPresent(renderer);
 }
 
-
-void closePeripherals()
+// Close the window & renderer
+void close_peripherals()
 {
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
@@ -77,44 +68,45 @@ void closePeripherals()
     SDL_Quit(); 
 }
 
-// END GRAPHICS SECTION
+SDL_Scancode keymap[KEY_LENGTH] = {
+  SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, // 1 2 3 4
+  SDL_SCANCODE_Q, SDL_SCANCODE_W, SDL_SCANCODE_E, SDL_SCANCODE_R, // q w e r
+  SDL_SCANCODE_A, SDL_SCANCODE_S, SDL_SCANCODE_D, SDL_SCANCODE_F, // a s d f
+  SDL_SCANCODE_Z, SDL_SCANCODE_X, SDL_SCANCODE_C, SDL_SCANCODE_V  // z x c v
+};
 
-// START INPUT SECTION
+SDL_Event event;
+int quit = 0;
 
-void keyPress()
+// Key events for chip-8
+void key_press()
 {   
     if(SDL_PollEvent(&event))
     {
-        const unsigned char* state = SDL_GetKeyboardState(NULL);
-        switch (event.type)
-        {
+        const unsigned char *state = SDL_GetKeyboardState(NULL);
+        switch (event.type) {
             case SDL_QUIT:
                 quit = 1;
             break;
-
             default:
                 for (int key = 0; key < KEY_LENGTH; key++) {
                     chip8.keypad[key] = state[keymap[key]];
                 }
 
-                if(state[SDL_SCANCODE_ESCAPE])
-                {
+                if(state[SDL_SCANCODE_ESCAPE]) {
                     quit = 1;
                 }
             break;
         }
     }
+
 }
 
-int exitMachine()
-{
-    return quit;
-}
+SDL_AudioSpec *want;
+SDL_AudioDeviceID audioDevice;
+int sampleNR;
 
-// END INPUT SECTION
-
-// START AUDIO SECTION
-
+// callback for audio
 void audio_callBack(void *userData, unsigned char *rawBuffer, int bytes)
 {
     short *buffer = (short *)rawBuffer;
@@ -128,45 +120,42 @@ void audio_callBack(void *userData, unsigned char *rawBuffer, int bytes)
     }
 }
 
-void initSound()
+// Initialize audio system
+void init_sound()
 {
-    sampleNR = 0;
+    want = (SDL_AudioSpec *) malloc(sizeof(SDL_AudioSpec));
+    want->freq = SAMPLE_RATE;
+    want->format = AUDIO_S8;
+    want->channels = 1;
+    want->samples = 2048;
+    want->callback = audio_callBack;
+    want->userdata = &sampleNR;
 
-    audioSpec = (SDL_AudioSpec*)malloc(sizeof(SDL_AudioSpec));
-    audioSpec->freq = SAMPLE_RATE;
-    audioSpec->format = AUDIO_S8;
-    audioSpec->channels = 1;
-    audioSpec->samples = 2048;
-    audioSpec->callback = audio_callBack;
-    audioSpec->userdata = &sampleNR;
-
-    audioDevice = SDL_OpenAudioDevice(NULL, 0, audioSpec, NULL, 0);
+    audioDevice = SDL_OpenAudioDevice(NULL, 0, want, NULL, 0);
     if(audioDevice != 0)
     {
         SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "Failed to open audio: %s\n", SDL_GetError());
     }
 }
 
-void closeAudio()
+// De init the audio system
+void close_audio()
 {
-    if(audioDevice != 0)
-    {
+    if(audioDevice != 0) {
         SDL_CloseAudioDevice(audioDevice);
         audioDevice = 0;
     }
 
-    if(audioSpec != 0)
-    {
-        free(audioSpec);
-        audioSpec = NULL;
+    if(want != 0) {
+        want = NULL;
+        free(want);
     }
 }
 
-void beepSound()
+// beep function
+void beep_sound()
 {
     SDL_PauseAudioDevice(audioDevice, 0);
-    SDL_Delay(40);
+    SDL_Delay(32);
     SDL_PauseAudioDevice(audioDevice, 1);
 }
-
-// END AUDIO SECTION

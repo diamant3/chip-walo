@@ -3,3 +3,6 @@
 *.exe
 *.out
 /bin
+
+# VSCODE Files
+/.vscode

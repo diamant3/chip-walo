@@ -5,15 +5,15 @@ SDL_WINDOWS = -lmingw32 -lSDL2main -lSDL2
 SDL_LINUX   = -lm -lSDL2
 
 # use $env:USERPROFILE/$USERPROFILE in powershell
-PROFILE = %USERPROFILE%
+PROFILE = $(shell echo %USERPROFILE%)
 
-LIBS    = -L PROFILE\scoop\apps\sdl2\2.0.16\lib
-INCLUDE = -I PROFILE\scoop\apps\sdl2\2.0.16\include
+LIBS    = -L $(PROFILE)\scoop\apps\sdl2\2.0.20\lib
+INCLUDE = -I $(PROFILE)\scoop\apps\sdl2\2.0.20\include
 
-SRCS = chip-walo.c system.c peripherals.c
+SRCS = src/*
 OUT  = chip-walo
 
-BUILD = $(CC) $(SRCS) -o bin/$(OUT) $(CFLAGS)
+BUILD = $(CC) $(CFLAGS) $(SRCS) -o bin/$(OUT)
 
 $(shell mkdir bin)
 ifeq ($(OS), Windows_NT)

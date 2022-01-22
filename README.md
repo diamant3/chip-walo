@@ -11,7 +11,7 @@
 
 Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
->"WALO" is from the tagalog word of the number 8.
+*"WALO" is from the tagalog word of number 8.*
 
 # Features
 
@@ -82,7 +82,11 @@ Extract the zip file then run this inside the folder:
 make
 ```
 
-*Note: No need for ```SDL2.dll```*
+Note: SDL2.dll is **required**. Put it inside the bin folder.
+
+Link(32bit): [SDL2.dll](https://www.libsdl.org/release/SDL2-2.0.20-win32-x86.zip)
+
+Link(64bit): [SDL2.dll](https://www.libsdl.org/release/SDL2-2.0.20-win32-x64.zip)
 
 # Usage
 
