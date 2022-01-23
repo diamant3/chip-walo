@@ -282,19 +282,17 @@ void cpu_cycle()
         // Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision
         case 0xD000:
         {
-            int pixel, yline, xline = 0;
- 
             chip8.V[0xF] = 0;
-            for (yline = 0; yline < N; yline++)
+            for (int yline = 0; yline < N; yline++)
             {
-                pixel = chip8.memory[chip8.I + yline];
+                int pixel = chip8.memory[chip8.I + yline];
 
-                for(xline = 0; xline < 8; xline++)
+                for(int xline = 0; xline < 8; xline++)
                 {
                     if((pixel & (0x80 >> xline)) != 0)
                     {
                         int displayAddress = ((chip8.V[vy] + yline) * SCREEN_WIDTH + chip8.V[vx] + xline) % (GFX_SIZE);
-                        if(chip8.gfx[displayAddress] == 1)
+                        if(chip8.gfx[displayAddress])
                         {
                             chip8.V[0xF] = 1;
                         }

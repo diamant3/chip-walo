@@ -6,8 +6,6 @@
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
-SDL_Texture *texture = NULL;
-SDL_Rect rect;
 
 // Initialize for window and renderer
 void init_peripherals()
@@ -15,7 +13,7 @@ void init_peripherals()
     int err = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     if(err)
     {
-        printf("SDL_Init failed: %s\n", SDL_GetError());
+        printf("SDL Init failed: %s\n", SDL_GetError());
     }
 
     window = SDL_CreateWindow(
@@ -34,9 +32,11 @@ void init_peripherals()
     );
 
     if(window == NULL || renderer == NULL) {
-        printf("SDL window creation failed: %s\n", SDL_GetError());
+        printf("Window/Renderer creation failed: %s\n", SDL_GetError());
     }
 }
+
+SDL_Rect rect;
 
 // Draw a pixel
 void draw_graphics()
@@ -45,8 +45,9 @@ void draw_graphics()
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    for (int ycor = 0; ycor < SCREEN_HEIGHT; ycor++) {
-        for (int xcor = 0; xcor < SCREEN_WIDTH; xcor++) {
+    int ycor, xcor;
+    for (ycor = 0; ycor < SCREEN_HEIGHT; ycor++) {
+        for (xcor = 0; xcor < SCREEN_WIDTH; xcor++) {
             if (chip8.gfx[xcor + (ycor * SCREEN_WIDTH)]) {
                 rect.x = (xcor * SCALE);
                 rect.y = (ycor * SCALE);
@@ -56,13 +57,13 @@ void draw_graphics()
             }
         }
     }
+
     SDL_RenderPresent(renderer);
 }
 
 // Close the window & renderer
 void close_peripherals()
 {
-    SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit(); 
@@ -132,9 +133,9 @@ void init_sound()
     want->userdata = &sampleNR;
 
     audioDevice = SDL_OpenAudioDevice(NULL, 0, want, NULL, 0);
-    if(audioDevice != 0)
+    if(audioDevice == 0)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "Failed to open audio: %s\n", SDL_GetError());
+        printf("Failed to open audio: %s\n", SDL_GetError());
     }
 }
 
@@ -150,12 +151,14 @@ void close_audio()
         want = NULL;
         free(want);
     }
+
+    return;
 }
 
 // beep function
 void beep_sound()
 {
     SDL_PauseAudioDevice(audioDevice, 0);
-    SDL_Delay(32);
+    SDL_Delay(48);
     SDL_PauseAudioDevice(audioDevice, 1);
 }

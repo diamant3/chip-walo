@@ -21,9 +21,8 @@ int main(int argc, char *argv[])
     // cpu ops loop
     while(1)
     {
-        SDL_Delay(8); // Limit speed
-        cpu_cycle();
         key_press();
+        cpu_cycle();
 
         if(chip8.drawFlag == 1) { 
             draw_graphics(); 
@@ -35,12 +34,14 @@ int main(int argc, char *argv[])
             chip8.soundFlag = 0; 
         }
 
+        // Deinitialization
         if(quit == 1) {
-            // Deinitialization
             close_audio();
             close_peripherals();
             break;
         }
+
+        SDL_Delay(4); // Limit speed
     }
 
     return 0;
