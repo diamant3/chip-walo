@@ -1,6 +1,9 @@
 #ifndef SYSTEM_H
     #define SYSTEM_H
 
+    // use c99 data types
+    #include <stdint.h>
+
     // Instructions
     #define NNN   (chip8.opcode & 0x0FFF)
     #define byte  (chip8.opcode & 0x00FF) 
@@ -20,25 +23,25 @@
     void init_sys();
 
     typedef struct chip8 {
-        unsigned char V[16];
-        unsigned short I;
-        unsigned short pc;
-        unsigned short opcode;
-        unsigned char memory[4096];
-        unsigned short stack[16];
-        unsigned short sp;
-        unsigned char gfx[64 * 32];
-        unsigned char delayTimer;
-        unsigned char soundTimer;
-        unsigned char keypad[16];
-        unsigned char drawFlag;
-        unsigned char soundFlag;
+        uint8_t V[16];
+        uint16_t I;
+        uint16_t pc;
+        uint16_t opcode;
+        uint8_t memory[4096];
+        uint16_t stack[16];
+        uint16_t sp;
+        uint8_t gfx[64 * 32];
+        uint8_t delayTimer;
+        uint8_t soundTimer;
+        uint8_t keypad[16];
+        uint8_t drawFlag;
+        uint8_t soundFlag;
     } Processor;
 
     extern Processor chip8;
 
     // Response
-    extern int quit;
+    extern uint8_t quit;
 
 
 #endif

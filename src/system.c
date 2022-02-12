@@ -1,13 +1,11 @@
-#include "../header/system.h"
-#include "../header/peripherals.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <string.h>
+#include "system.h"
 
 Processor chip8;
 
-unsigned char fontSet[80] = {
+uint8_t fontSet[80] = {
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
         0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -29,13 +27,13 @@ unsigned char fontSet[80] = {
 // Initialize the chip8 cpu
 void init_sys()
 {
-    srand( (unsigned int) time(NULL) );
+    srand( (uint32_t) time(NULL) );
     chip8.I = 0;
     chip8.pc = START_ADDRESS;
     chip8.opcode = 0;
     chip8.sp = 0;
 
-    for(int font = 0; font < FONT_SET; font++)
+    for(uint8_t font = 0; font < FONT_SET; font++)
     {
         chip8.memory[font] = fontSet[font];
     }
@@ -44,12 +42,12 @@ void init_sys()
 // Function for loading rom
 void rom_load(const char *rom)
 {
-    unsigned short romSize = 0;
-    char *romBuffer;
+    uint16_t romSize = 0;
+    uint8_t *romBuffer;
     FILE *file;
     
     // Check if file exist
-    if((file = fopen(rom, "rb")) == NULL)
+    if( (file = fopen(rom, "rb")) == NULL )
     {
         return;
     }
@@ -62,15 +60,14 @@ void rom_load(const char *rom)
     fseek(file, 0, SEEK_SET);
     romBuffer = (char *) malloc(sizeof(char) * (romSize + 1));
 
-    // Load the rom to memory
-    int file_status = fread(romBuffer, 1, romSize, file);
-    if(file_status < 1) {
+    // Check and Load the rom to memory
+    if( fread(romBuffer, 1, romSize, file) < 1 ) {
         fclose(file);
         free(romBuffer);
         return;
     }
 
-    for(size_t data = 0; data < romSize; data++)
+    for(uint16_t data = 0; data < romSize; data++)
     {
         chip8.memory[START_ADDRESS + data] = romBuffer[data];
     }
@@ -84,8 +81,6 @@ void cpu_cycle()
 {
     chip8.opcode = chip8.memory[chip8.pc] << 8 | chip8.memory[chip8.pc + 1]; 
 
-    // Debugging purpose printf("current opcode: 0x%X\n", chip8.opcode);
-
     switch(chip8.opcode & 0xF000)
     {
         case 0x0000:
@@ -93,7 +88,9 @@ void cpu_cycle()
             {
                 // Clear the display
                 case 0xE0:
-                    memset(chip8.gfx, 0, GFX_SIZE);
+                    for(uint16_t pixel_data = 0; pixel_data < GFX_SIZE; pixel_data++) {
+                        chip8.gfx[pixel_data] = 0;
+                    }
                     chip8.pc += 2;
                 break;
 
@@ -193,8 +190,8 @@ void cpu_cycle()
                 {
                     chip8.V[0xF] = 0;
 
-                    unsigned short result = chip8.V[vx] + chip8.V[vy];
-                    unsigned char overflow = result > 0xFF ? 1 : 0;
+                    uint16_t result = chip8.V[vx] + chip8.V[vy];
+                    uint8_t overflow = result > 0xFF ? 1 : 0;
                     chip8.V[vx] = result & 0xFF;
                     chip8.V[0xF] = overflow;
 
@@ -207,7 +204,7 @@ void cpu_cycle()
                 {
                     chip8.V[0xF] = 0;
                     
-                    unsigned char overflow = chip8.V[vx] >= chip8.V[vy] ? 1 : 0;
+                    uint8_t overflow = chip8.V[vx] >= chip8.V[vy] ? 1 : 0;
 		    	    chip8.V[vx] = chip8.V[vx] - chip8.V[vy];
 			        chip8.V[0xF] = overflow;                    
 
@@ -218,7 +215,7 @@ void cpu_cycle()
                 // Set register Vx = Vx SHR 1
                 case 0x6:
                 {
-                    unsigned char overflow = chip8.V[vx] & 1;
+                    uint8_t overflow = chip8.V[vx] & 1;
                     chip8.V[vx] >>= 1;
                     chip8.V[0xF] = overflow;
                     chip8.pc += 2;
@@ -230,7 +227,7 @@ void cpu_cycle()
                 {
                     chip8.V[0xF] = 0;
 
-                    unsigned char overflow = chip8.V[vy] >= chip8.V[vx] ? 1 : 0;
+                    uint8_t overflow = chip8.V[vy] >= chip8.V[vx] ? 1 : 0;
 			        chip8.V[vx] = chip8.V[vy] - chip8.V[vx];
 			        chip8.V[0xF] = overflow;
                     chip8.pc += 2;
@@ -240,7 +237,7 @@ void cpu_cycle()
                 // Set register Vx = Vx SHL 1
                 case 0xE:       
                 {
-                    unsigned char overflow = chip8.V[vx] >> 7 ? 1 : 0;
+                    uint8_t overflow = chip8.V[vx] >> 7 ? 1 : 0;
                     chip8.V[vx] <<= 1;
                     chip8.V[0xF] = overflow;
                     chip8.pc += 2;
@@ -275,7 +272,7 @@ void cpu_cycle()
 
         // Set register Vx = random byte AND byte
         case 0xC000:
-            chip8.V[vx] = (rand() % 256) & byte;
+            chip8.V[vx] = (rand() % 0xFF) & byte;
             chip8.pc += 2;
         break;
 
@@ -283,26 +280,22 @@ void cpu_cycle()
         case 0xD000:
         {
             chip8.V[0xF] = 0;
-            for (int yline = 0; yline < N; yline++)
+            for (uint8_t yline = 0; yline < N; yline++)
             {
-                int pixel = chip8.memory[chip8.I + yline];
-
-                for(int xline = 0; xline < 8; xline++)
+                uint16_t pixel = chip8.memory[chip8.I + yline];
+                for(uint8_t xline = 0; xline < 8; xline++)
                 {
                     if((pixel & (0x80 >> xline)) != 0)
                     {
-                        int displayAddress = ((chip8.V[vy] + yline) * SCREEN_WIDTH + chip8.V[vx] + xline) % (GFX_SIZE);
+                        uint32_t displayAddress = ((chip8.V[vy] + yline) * 64 + chip8.V[vx] + xline) % (GFX_SIZE);
                         if(chip8.gfx[displayAddress])
                         {
                             chip8.V[0xF] = 1;
                         }
-
                         chip8.gfx[displayAddress] ^= 1;    
                     }
-                }
-                
+                } 
             }
-
             chip8.drawFlag = 1;
             chip8.pc += 2;
         }
@@ -346,7 +339,7 @@ void cpu_cycle()
 
                 // Wait for a key press, store the value of the key in register Vx
                 case 0x0A:
-                    for(int key = 0; key < KEY_LENGTH; key++)
+                    for(uint8_t key = 0; key < KEY_LENGTH; key++)
                     {
                         if(chip8.keypad[key] != 0) 
                         {
@@ -392,7 +385,7 @@ void cpu_cycle()
                 
                 // Store registers V0 through Vx in memory starting at location I
                 case 0x55:
-                    for(int vi = 0; vi <= vx; vi++)
+                    for(uint8_t vi = 0; vi <= vx; vi++)
                     {
                         chip8.memory[chip8.I + vi] = chip8.V[vi];
                     }
@@ -402,7 +395,7 @@ void cpu_cycle()
 
                 // Read registers V0 through Vx from memory starting at location I
                 case 0x65:
-                    for(int vi = 0; vi <= vx; vi++)
+                    for(uint8_t vi = 0; vi <= vx; vi++)
                     {
                         chip8.V[vi] = chip8.memory[chip8.I + vi];
                     }

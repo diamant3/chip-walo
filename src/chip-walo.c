@@ -1,5 +1,5 @@
-#include "../header/system.h"
-#include "../header/peripherals.h"
+#include "system.h"
+#include "peripherals.h"
 #include <stdio.h>
 
 int main(int argc, char *argv[])
@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
 
     // Initialization
     init_sys();
-    init_peripherals();
-    init_sound();
+    init_graphics();
+    init_audio();
 
     // cpu ops loop
     while(1)
@@ -30,14 +30,14 @@ int main(int argc, char *argv[])
         }
 
         if(chip8.soundFlag == 1) { 
-            beep_sound(); 
+            beep_audio(); 
             chip8.soundFlag = 0; 
         }
 
         // Deinitialization
         if(quit == 1) {
             close_audio();
-            close_peripherals();
+            close_graphics();
             break;
         }
 

@@ -11,17 +11,17 @@
     #define AMPLITUDE   28000
 
     //  gfx Functions
-    void init_peripherals();
+    void init_graphics();
     void draw_graphics();
-    void close_peripherals();
+    void close_graphics();
 
     // input functions
     void key_press();
 
     // audio handlers
     void audio_callBack(void *userData, unsigned char *rawBuffer, int bytes);
-    void init_sound();
+    void init_audio();
     void close_audio();
-    void beep_sound();
+    void beep_audio();
 
 #endif
