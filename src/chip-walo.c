@@ -2,13 +2,11 @@
 #include "peripherals.h"
 #include <stdio.h>
 
-int main(int argc, char *argv[])
-{
+int32_t main (int32_t argc, const int8_t *argv[]) {
     // Load Rom
-    if(argc != 2) 
-    {
+    if (argc != 2) {
         printf("Usage: chip-walo \"rom.ch8\"");
-        return 1;
+        return TRUE;
     } else {
         rom_load(argv[1]);
     }
@@ -19,23 +17,22 @@ int main(int argc, char *argv[])
     init_audio();
 
     // cpu ops loop
-    while(1)
-    {
+    while (TRUE) {
         key_press();
         cpu_cycle();
 
-        if(chip8.drawFlag == 1) { 
+        if (chip8.drawFlag) { 
             draw_graphics(); 
-            chip8.drawFlag = 0; 
+            chip8.drawFlag = TRUE; 
         }
 
-        if(chip8.soundFlag == 1) { 
+        if (chip8.soundFlag) { 
             beep_audio(); 
-            chip8.soundFlag = 0; 
+            chip8.soundFlag = FALSE; 
         }
 
         // Deinitialization
-        if(quit == 1) {
+        if (quit) {
             close_audio();
             close_graphics();
             break;
@@ -43,6 +40,5 @@ int main(int argc, char *argv[])
 
         SDL_Delay(4); // Limit speed
     }
-
     return 0;
 }

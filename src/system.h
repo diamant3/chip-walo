@@ -17,8 +17,12 @@
     #define GFX_SIZE      (64 * 32)
     #define KEY_LENGTH    16
 
+    // Boolean
+    #define TRUE  1
+    #define FALSE 0
+
     // Functions
-    void rom_load(const char *rom);
+    void rom_load(const int8_t *rom);
     void cpu_cycle(); 
     void init_sys();
 
@@ -30,18 +34,16 @@
         uint8_t memory[4096];
         uint16_t stack[16];
         uint16_t sp;
-        uint8_t gfx[64 * 32];
+        uint8_t gfx[GFX_SIZE];
         uint8_t delayTimer;
         uint8_t soundTimer;
-        uint8_t keypad[16];
+        uint8_t keypad[KEY_LENGTH];
         uint8_t drawFlag;
         uint8_t soundFlag;
-    } Processor;
+    } Processor_t;
 
-    extern Processor chip8;
+    extern Processor_t chip8;
 
     // Response
     extern uint8_t quit;
-
-
 #endif

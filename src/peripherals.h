@@ -1,6 +1,9 @@
 #ifndef PERIPHERALS_H
     #define PERIPHERALS_H
 
+    // use c99 data types
+    #include <stdint.h>
+
     // Resolution
     #define SCALE         8
     #define SCREEN_WIDTH  64
@@ -19,7 +22,7 @@
     void key_press();
 
     // audio handlers
-    void audio_callBack(void *userData, unsigned char *rawBuffer, int bytes);
+    void audio_callBack(void *userData, uint8_t *rawBuffer, int32_t bytes);
     void init_audio();
     void close_audio();
     void beep_audio();
