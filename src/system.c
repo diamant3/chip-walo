@@ -38,8 +38,8 @@ void init_sys() {
 }
 
 // Function for loading rom
-void rom_load(const int8_t *rom) {
-    uint16_t romSize = 0;
+void load_rom(char* rom) {
+    uint16_t romSize;
     uint8_t *romBuffer;
     FILE *file;
     
@@ -54,10 +54,10 @@ void rom_load(const int8_t *rom) {
 
     // Get the rom buffer
     fseek(file, 0, SEEK_SET);
-    romBuffer = (int8_t*) malloc(sizeof(int8_t) * (romSize + 1));
+    romBuffer = (uint8_t*) malloc(sizeof(uint8_t) * (romSize + 1));
 
     // Check and Load the rom to memory
-    if ( fread(romBuffer, 1, romSize, file) < 1  || romBuffer == NULL) {
+    if ( fread(romBuffer, 1, romSize, file) < 1 || romBuffer == NULL) {
         fclose(file);
         free(romBuffer);
         return;
@@ -252,7 +252,7 @@ void cpu_cycle() {
 
         // Set register Vx = random byte AND byte
         case 0xC000:
-            chip8.V[vx] = ( rand() % 0xFF ) & byte;
+            chip8.V[vx] = ( rand() % 255 ) & byte;
             chip8.pc += 2;
             break;
 
@@ -264,7 +264,7 @@ void cpu_cycle() {
                 uint16_t height = N;
                 uint16_t pixel;
  
-                chip8.V[0xF] = 0;
+                chip8.V[0xF] = FALSE;
                 for (size_t yline = 0; yline < height; ++yline) {
                     pixel = chip8.memory[chip8.I + yline];
                     for (size_t xline = 0; xline < 8; ++xline) {
@@ -272,7 +272,7 @@ void cpu_cycle() {
                             if ( chip8.gfx[(x + xline + ((y + yline) * 64))] == TRUE ) {
                                 chip8.V[0xF] = TRUE;
                             }                                 
-                            chip8.gfx[(x + xline + ((y + yline) * 64)) % (64 * 32)] ^= 1;
+                            chip8.gfx[(x + xline + ((y + yline) * 64)) % (GFX_SIZE)] ^= 1;
                         }
                     }
                 }
@@ -316,7 +316,7 @@ void cpu_cycle() {
                 // Wait for a key press, store the value of the key in register Vx
                 case 0x0A:
                     for (size_t key = 0; key < KEY_LENGTH; ++key) {
-                        if(chip8.keypad[key] != 0) {
+                        if(chip8.keypad[key] == TRUE) {
                             chip8.V[vx] = key;
                             chip8.pc += 2;
                             break;
@@ -387,5 +387,8 @@ void cpu_cycle() {
     if (chip8.soundTimer) {
         --chip8.soundTimer;
         chip8.soundFlag = TRUE;
-    }  
+    } 
+
+    // printing opcode 
+    //printf("[OK] 0x%x\n", chip8.opcode); 
 }

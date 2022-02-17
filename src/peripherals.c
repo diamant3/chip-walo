@@ -23,8 +23,9 @@ SDL_Scancode keymap[KEY_LENGTH] = {
 
 // Initialize for window and renderer
 void init_graphics() {
-    if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) ) {
+    if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         printf("SDL Init failed: %s\n", SDL_GetError());
+        return;
     }
 
     window = SDL_CreateWindow(
@@ -36,18 +37,20 @@ void init_graphics() {
         SDL_WINDOW_SHOWN
     );
 
+    if (window == NULL) {
+        printf("Window creation failed: %s\n", SDL_GetError());
+        return;
+    }
+
     renderer = SDL_CreateRenderer(
         window,
         -1,
         0
     );
 
-    if (window == NULL) {
-        printf("Window creation failed: %s\n", SDL_GetError());
-    }
-
     if (renderer == NULL) {
         printf("Renderer creation failed: %s\n", SDL_GetError());
+        return;
     }
 }
 
@@ -89,10 +92,9 @@ void key_press() {
             default:
                 for (size_t key = 0; key < KEY_LENGTH; ++key) {
                     chip8.keypad[key] = state[keymap[key]];
-                }
-
-                if (state[SDL_SCANCODE_ESCAPE]) {
-                    quit = TRUE;
+                    if (state[SDL_SCANCODE_ESCAPE]) {
+                        quit = TRUE;
+                    }
                 }
             break;
         }
@@ -101,13 +103,13 @@ void key_press() {
 
 // callback for audio
 void audio_callBack(void *userData, uint8_t *rawBuffer, int32_t bytes) {
-    uint16_t* buffer = (int16_t*)rawBuffer;
+    uint16_t* buffer = (uint16_t*)rawBuffer;
     uint16_t length = bytes / 2;
     uint16_t sampleNR = (*(int32_t*) userData);
 
     for (size_t data = 0; data < length; data++, sampleNR++) {
         double_t time = (double_t)sampleNR / (double_t)SAMPLE_RATE;
-        buffer[data] = (int16_t)(AMPLITUDE * sin(2.0f * M_PI * 441.0f * time));
+        buffer[data] = (uint16_t)(AMPLITUDE * sin(2.0f * M_PI * 441.0f * time));
     }
 }
 
@@ -122,8 +124,9 @@ void init_audio() {
     want->userdata = &sampleNR;
 
     audioDevice = SDL_OpenAudioDevice(NULL, 0, want, NULL, 0);
-    if (audioDevice < 1) {
+    if ( audioDevice < 1 ) {
         printf("Failed to open audio: %s\n", SDL_GetError());
+        return;
     }
 }
 

@@ -22,7 +22,7 @@
     #define FALSE 0
 
     // Functions
-    void rom_load(const int8_t *rom);
+    void load_rom(char* rom);
     void cpu_cycle(); 
     void init_sys();
 

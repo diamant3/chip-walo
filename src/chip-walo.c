@@ -1,14 +1,14 @@
+#include <stdio.h>
 #include "system.h"
 #include "peripherals.h"
-#include <stdio.h>
 
-int32_t main (int32_t argc, const int8_t *argv[]) {
+int8_t main(int8_t argc, char* argv[]) {
     // Load Rom
-    if (argc != 2) {
+    if (argc == 2) {
+        load_rom(argv[1]);
+    } else {
         printf("Usage: chip-walo \"rom.ch8\"");
         return TRUE;
-    } else {
-        rom_load(argv[1]);
     }
 
     // Initialization
@@ -23,7 +23,7 @@ int32_t main (int32_t argc, const int8_t *argv[]) {
 
         if (chip8.drawFlag) { 
             draw_graphics(); 
-            chip8.drawFlag = TRUE; 
+            chip8.drawFlag = FALSE; 
         }
 
         if (chip8.soundFlag) { 
@@ -38,7 +38,7 @@ int32_t main (int32_t argc, const int8_t *argv[]) {
             break;
         }
 
-        SDL_Delay(4); // Limit speed
+        SDL_Delay(4);
     }
     return 0;
 }
