@@ -1,5 +1,5 @@
 CC     = gcc
-CFLAGS = -Os
+CFLAGS = -O3
 
 SDL_WINDOWS = -lmingw32 -lSDL2main -lSDL2
 SDL_LINUX   = -lm -lSDL2
@@ -15,7 +15,6 @@ OUT  = chip-walo
 
 BUILD = $(CC) $(CFLAGS) $(SRCS) -o bin/$(OUT)
 
-$(shell mkdir bin)
 ifeq ($(OS), Windows_NT)
 	BUILD += $(SDL_WINDOWS) $(LIBS) $(INCLUDE)
 else

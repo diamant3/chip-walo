@@ -83,17 +83,19 @@ void close_graphics() {
 
 // Key events for chip-8
 void key_press() {   
+    SDL_Delay(2);
+
     if ( SDL_PollEvent(&event) ) {
         const uint8_t *state = SDL_GetKeyboardState(NULL);
         switch (event.type) {
             case SDL_QUIT:
-                quit = TRUE;
+                quit = 1;
             break;
             default:
                 for (size_t key = 0; key < KEY_LENGTH; ++key) {
                     chip8.keypad[key] = state[keymap[key]];
                     if (state[SDL_SCANCODE_ESCAPE]) {
-                        quit = TRUE;
+                        quit = 1;
                     }
                 }
             break;
@@ -138,7 +140,7 @@ void close_audio() {
 
 // beep function
 void beep_audio() {
-    SDL_PauseAudioDevice(audioDevice, FALSE);
+    SDL_PauseAudioDevice(audioDevice, 0);
     SDL_Delay(48);
-    SDL_PauseAudioDevice(audioDevice, TRUE);
+    SDL_PauseAudioDevice(audioDevice, 1);
 }

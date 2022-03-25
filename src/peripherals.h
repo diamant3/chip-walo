@@ -1,9 +1,6 @@
 #ifndef PERIPHERALS_H
     #define PERIPHERALS_H
 
-    // use c99 data types
-    #include <stdint.h>
-
     // Resolution
     #define SCALE         8
     #define SCREEN_WIDTH  64

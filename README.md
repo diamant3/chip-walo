@@ -1,19 +1,16 @@
-<p align="center"><img src="assets/chip-walo.gif"></p>
+<p align="center"><img src="assets/chip-walo.gif" width="640px"></p>
 
 # CHIP-WALO
 
 ![C](https://img.shields.io/badge/Code-C-green?style=for-the-badge)
 ![SDL2](https://img.shields.io/badge/SDL2-blue?style=for-the-badge)
 
-# Intro
-
-*CHIP-8 is an interpreted programming language which was initially used in the late 1970s. It was made to allow more easily programed game for those computers. All programs written in CHIP-8 are run on a virtual machine which interprets each instruction.*
-
+> CHIP-8 is an interpreted programming language which was initially used in the late 1970s. It was made to allow more easily programed game for those computers. All programs written in CHIP-8 are run on a virtual machine which interprets each instruction.<br>
 Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
 *"WALO" is from the tagalog word of number 8.*
 
-# Features
+## Features
 
 <ul>
   <li>Working sound system</li>
@@ -21,19 +18,19 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 </ul>
 
 
-# Game samples
+## Game samples
 
-## Space Invaders
+### Space Invaders
 
-<img src="assets/Space_Invaders.png">
+<img src="assets/Space_Invaders.png" width="480px">
 
-## Breakout
+### Breakout
 
-<img src="assets/Breakout.png">
+<img src="assets/Breakout.png" width="480px">
 
-# Building from source
+## Building from source
 
-## Linux
+### Linux
 
 Pre-requisites:
 * git
@@ -45,12 +42,14 @@ Pre-requisites:
 Download the repo:
 
 ```bash 
+
 git clone https://github.com/diamant3/chip-walo.git
 ``` 
 
 After you download, run this:
 
 ```bash
+
 cd chip-walo 
 ```
 and this: 
@@ -59,7 +58,7 @@ and this:
 make
 ```
 
-## Windows
+### Windows
 
 Pre-requisites:
 * gcc
@@ -71,6 +70,7 @@ Pre-requisites:
 After you install the scoop, run this:
 
 ```bash
+
 scoop bucket add extras && scoop install sdl2
 ```
 
@@ -79,16 +79,14 @@ Download the [chip-walo](https://github.com/diamant3/chip-walo/archive/refs/head
 Extract the zip file then run this inside the folder:
 
 ```bash
+
 make
 ```
 
-Note: SDL2.dll is **required**. Put it inside the bin folder.
+Link: [SDL2 Runtime Binaries](https://www.libsdl.org/download-2.0.php)
+Note: ```SDL2.dll is``` **required**. Put it inside the ``` bin ``` folder.
 
-Link(32bit): [SDL2.dll](https://www.libsdl.org/release/SDL2-2.0.20-win32-x86.zip)
-
-Link(64bit): [SDL2.dll](https://www.libsdl.org/release/SDL2-2.0.20-win32-x64.zip)
-
-# Usage
+## Usage
 
 <table>
   <tr>
@@ -119,15 +117,15 @@ Link(64bit): [SDL2.dll](https://www.libsdl.org/release/SDL2-2.0.20-win32-x64.zip
 
 > This is the key mappings of the chip-walo, use keyboard to control.
 
-## Run
-
-*Note: The executable file is located in ``` bin ``` folder.*
+### Run
 
 ```bash
 chip-walo PATH/OF/THE/ROM
 ```
 
-# :heart: Credits
+*The executable file is located in ``` bin ``` folder.*
+
+## Credits
 
 [SDL2](https://www.libsdl.org/) - graphics API that i used to make this.<br>
 [scoop](https://scoop.sh/) - This is i used to fix the sdl2 dependencies.<br>
@@ -138,9 +136,9 @@ chip-walo PATH/OF/THE/ROM
 [Chip-8](https://chip-8.github.io/links/) - Chip-8 Resources.<br>
 [Zophar.net](https://www.zophar.net/pdroms/chip8.html) - chip-8 ROMS.<br>
 
-# Contribution
+## Contribution
 
-Accepting any contribution! :smiley:
+This is an educational project and feel free to contribute!
 
 *Please read the [Contributing](https://github.com/diamant3/chip-walo/blob/main/CONTRIBUTING.md).*
 

@@ -17,10 +17,6 @@
     #define GFX_SIZE      (64 * 32)
     #define KEY_LENGTH    16
 
-    // Boolean
-    #define TRUE  1
-    #define FALSE 0
-
     // Functions
     void load_rom(char* rom);
     void cpu_cycle(); 

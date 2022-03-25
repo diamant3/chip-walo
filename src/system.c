@@ -176,7 +176,7 @@ void cpu_cycle() {
                     {
                         chip8.V[0xF] = 0;
                         uint16_t result = chip8.V[vx] + chip8.V[vy];
-                        uint8_t overflow = result > 0xFF ? TRUE : FALSE;
+                        uint8_t overflow = result > 0xFF ? 1 : 0;
                         chip8.V[vx] = result & 0xFF;
                         chip8.V[0xF] = overflow;
                         chip8.pc += 2;
@@ -187,7 +187,7 @@ void cpu_cycle() {
                 case 0x5:
                     {
                         chip8.V[0xF] = 0;
-                        uint8_t overflow = chip8.V[vx] >= chip8.V[vy] ? TRUE : FALSE;
+                        uint8_t overflow = chip8.V[vx] >= chip8.V[vy] ? 1 : 0;
 		    	        chip8.V[vx] = chip8.V[vx] - chip8.V[vy];
 			            chip8.V[0xF] = overflow;                    
                         chip8.pc += 2;
@@ -208,7 +208,7 @@ void cpu_cycle() {
                 case 0x7:
                     {
                         chip8.V[0xF] = 0;
-                        uint8_t overflow = chip8.V[vy] >= chip8.V[vx] ? TRUE : FALSE;
+                        uint8_t overflow = chip8.V[vy] >= chip8.V[vx] ? 1 : 0;
 			            chip8.V[vx] = chip8.V[vy] - chip8.V[vx];
 			            chip8.V[0xF] = overflow;
                         chip8.pc += 2;
@@ -218,7 +218,7 @@ void cpu_cycle() {
                 // Set register Vx = Vx SHL 1
                 case 0xE:       
                 {
-                    uint8_t overflow = chip8.V[vx] >> 7 ? TRUE : FALSE;
+                    uint8_t overflow = chip8.V[vx] >> 7 ? 1 : 0;
                     chip8.V[vx] <<= 1;
                     chip8.V[0xF] = overflow;
                     chip8.pc += 2;
@@ -264,19 +264,19 @@ void cpu_cycle() {
                 uint16_t height = N;
                 uint16_t pixel;
  
-                chip8.V[0xF] = FALSE;
+                chip8.V[0xF] = 0;
                 for (size_t yline = 0; yline < height; ++yline) {
                     pixel = chip8.memory[chip8.I + yline];
                     for (size_t xline = 0; xline < 8; ++xline) {
                         if ( (pixel & (0x80 >> xline)) != 0 ) {
-                            if ( chip8.gfx[(x + xline + ((y + yline) * 64))] == TRUE ) {
-                                chip8.V[0xF] = TRUE;
+                            if ( chip8.gfx[(x + xline + ((y + yline) * 64))] == 1 ) {
+                                chip8.V[0xF] = 1;
                             }                                 
                             chip8.gfx[(x + xline + ((y + yline) * 64)) % (GFX_SIZE)] ^= 1;
                         }
                     }
                 }
-                chip8.drawFlag = TRUE;
+                chip8.drawFlag = 1;
                 chip8.pc += 2;
             }
             break;
@@ -285,7 +285,7 @@ void cpu_cycle() {
             {
                 // Skip next instruction if key with the value of register Vx is pressed
                 case 0x9E:
-                    if (chip8.keypad[chip8.V[vx]] == TRUE) { 
+                    if (chip8.keypad[chip8.V[vx]] == 1) { 
                         chip8.pc += 2; 
                     }
                     chip8.pc += 2;
@@ -293,7 +293,7 @@ void cpu_cycle() {
 
                 // Skip next instruction if key with the value of Vx is not pressed
                 case 0xA1:
-                    if (chip8.keypad[chip8.V[vx]] == FALSE) {
+                    if (chip8.keypad[chip8.V[vx]] == 0) {
                         chip8.pc +=2; 
                     }
                     chip8.pc += 2;
@@ -316,7 +316,7 @@ void cpu_cycle() {
                 // Wait for a key press, store the value of the key in register Vx
                 case 0x0A:
                     for (size_t key = 0; key < KEY_LENGTH; ++key) {
-                        if(chip8.keypad[key] == TRUE) {
+                        if(chip8.keypad[key] == 1) {
                             chip8.V[vx] = key;
                             chip8.pc += 2;
                             break;
@@ -386,7 +386,7 @@ void cpu_cycle() {
 
     if (chip8.soundTimer) {
         --chip8.soundTimer;
-        chip8.soundFlag = TRUE;
+        chip8.soundFlag = 1;
     } 
 
     // printing opcode 
