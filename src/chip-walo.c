@@ -2,39 +2,35 @@
 #include "system.h"
 #include "peripherals.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     // Load Rom
-    if (argc == 2) {
-        load_rom(argv[1]);
-    } else {
+    if (argc != 2) {
         printf("Usage: chip-walo \"rom.ch8\"");
         return 1;
+    } 
+    else {
+        load_rom(argv[1]);
+        init_sys();
+        create_peripherals();
     }
-
-    // Initialization
-    init_sys();
-    init_graphics();
-    init_audio();
-
+    
     // cpu ops loop
     while (1) {
-        key_press();
+        detect_key();
         cpu_cycle();
 
-        if (chip8.drawFlag) { 
-            draw_graphics(); 
+        if (chip8.drawFlag == 1) { 
+            draw_pixel(); 
             chip8.drawFlag = 0; 
         }
 
-        if (chip8.soundFlag) { 
-            beep_audio(); 
+        if (chip8.soundFlag == 1) { 
+            beep(); 
             chip8.soundFlag = 0; 
         }
 
-        // Deinitialization
-        if (quit) {
-            close_audio();
-            close_graphics();
+        if (quit == 1) {
+            destroy_peripherals();
             break;
         }
     }

@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/chip-walo.gif" width="640px"></p>
+<p align="center"><img src="images/chip-walo.gif" width="640px"></p>
 
 # CHIP-WALO
 
@@ -22,11 +22,11 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
 ### Space Invaders
 
-<img src="assets/Space_Invaders.png" width="480px">
+<img src="images/Space_Invaders.png" width="480px">
 
 ### Breakout
 
-<img src="assets/Breakout.png" width="480px">
+<img src="images/Breakout.png" width="480px">
 
 ## Building from source
 

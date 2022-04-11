@@ -4,7 +4,6 @@
 #include "system.h"
 
 Processor_t chip8;
-
 uint8_t fontSet[80] = {
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -24,9 +23,8 @@ uint8_t fontSet[80] = {
         0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
-// Initialize the chip8 cpu
 void init_sys() {
-    srand( (uint32_t) time(NULL) );
+    srand((uint32_t)time(NULL));
     chip8.I = 0;
     chip8.pc = START_ADDRESS;
     chip8.opcode = 0;
@@ -37,27 +35,24 @@ void init_sys() {
     }
 }
 
-// Function for loading rom
-void load_rom(char* rom) {
+void load_rom(char *rom) {
     uint16_t romSize;
-    uint8_t *romBuffer;
-    FILE *file;
+    uint8_t *romBuffer = NULL;
+    FILE *file = NULL;
     
     // Check if file exist
-    if ( (file = fopen(rom, "rb")) == NULL ) {
+    if ((file = fopen(rom, "rb")) == NULL) {
         return;
     }
 
-    // Get the rom size
+    // Get the rom size & buffer
     fseek(file, 0, SEEK_END);
     romSize = ftell(file);
-
-    // Get the rom buffer
     fseek(file, 0, SEEK_SET);
     romBuffer = (uint8_t*) malloc(sizeof(uint8_t) * (romSize + 1));
 
     // Check and Load the rom to memory
-    if ( fread(romBuffer, 1, romSize, file) < 1 || romBuffer == NULL) {
+    if (fread(romBuffer, 1, romSize, file) < 1 || romBuffer == NULL) {
         fclose(file);
         free(romBuffer);
         return;
@@ -66,7 +61,6 @@ void load_rom(char* rom) {
     for (size_t data = 0; data < romSize; ++data) {
         chip8.memory[START_ADDRESS + data] = romBuffer[data];
     }
-
     fclose(file);
     free(romBuffer);
 }
@@ -113,25 +107,28 @@ void cpu_cycle() {
         // Skip next instruction if register Vx == byte
         case 0x3000:
             if (chip8.V[vx] == byte) { 
+                chip8.pc += 4;
+            } else {
                 chip8.pc += 2;
             }
-            chip8.pc += 2;
             break;
 
         // Skip next instruction if register Vx != byte
         case 0x4000:
             if (chip8.V[vx] != byte) {
-                chip8.pc += 2; 
+                chip8.pc += 4; 
+            } else {
+                chip8.pc += 2;
             }
-            chip8.pc += 2;
             break;
 
         // Skip next instruction if register Vx == register Vy
         case 0x5000:
             if (chip8.V[vx] == chip8.V[vy]) {
-                chip8.pc += 2; 
+                chip8.pc += 4; 
+            } else {
+                chip8.pc += 2;
             }
-            chip8.pc += 2;
             break;
 
         // Set register Vx = byte
@@ -176,8 +173,14 @@ void cpu_cycle() {
                     {
                         chip8.V[0xF] = 0;
                         uint16_t result = chip8.V[vx] + chip8.V[vy];
-                        uint8_t overflow = result > 0xFF ? 1 : 0;
-                        chip8.V[vx] = result & 0xFF;
+                        uint8_t overflow = 0;
+
+                        if (result > 255) {
+                            overflow = 1;
+                        } else {
+                            overflow = 0;
+                        }
+                        chip8.V[vx] = result & 255;
                         chip8.V[0xF] = overflow;
                         chip8.pc += 2;
                     }
@@ -187,7 +190,13 @@ void cpu_cycle() {
                 case 0x5:
                     {
                         chip8.V[0xF] = 0;
-                        uint8_t overflow = chip8.V[vx] >= chip8.V[vy] ? 1 : 0;
+                        uint8_t overflow = 0;
+
+                        if (chip8.V[vx] >= chip8.V[vy]) {
+                            overflow = 1;
+                        } else {
+                            overflow = 0;
+                        }
 		    	        chip8.V[vx] = chip8.V[vx] - chip8.V[vy];
 			            chip8.V[0xF] = overflow;                    
                         chip8.pc += 2;
@@ -208,7 +217,13 @@ void cpu_cycle() {
                 case 0x7:
                     {
                         chip8.V[0xF] = 0;
-                        uint8_t overflow = chip8.V[vy] >= chip8.V[vx] ? 1 : 0;
+                        uint8_t overflow = 0;
+
+                        if (chip8.V[vy] >= chip8.V[vx]) {
+                            overflow = 1;
+                        } else {
+                            overflow = 0;
+                        }
 			            chip8.V[vx] = chip8.V[vy] - chip8.V[vx];
 			            chip8.V[0xF] = overflow;
                         chip8.pc += 2;
@@ -218,7 +233,13 @@ void cpu_cycle() {
                 // Set register Vx = Vx SHL 1
                 case 0xE:       
                 {
-                    uint8_t overflow = chip8.V[vx] >> 7 ? 1 : 0;
+                    uint8_t overflow = 0;
+                    
+                    if (chip8.V[vx] >> 7) {
+                        overflow = 1;
+                    } else {
+                        overflow = 0;
+                    }
                     chip8.V[vx] <<= 1;
                     chip8.V[0xF] = overflow;
                     chip8.pc += 2;
@@ -234,9 +255,10 @@ void cpu_cycle() {
         // Skip next instruction if register Vx != Vy
         case 0x9000:
             if (chip8.V[vx] != chip8.V[vy]) { 
-                chip8.pc += 2; 
+                chip8.pc += 4; 
+            } else {
+                chip8.pc += 2;
             }
-            chip8.pc += 2;
             break;
 
         // Set I = NNN
@@ -252,7 +274,7 @@ void cpu_cycle() {
 
         // Set register Vx = random byte AND byte
         case 0xC000:
-            chip8.V[vx] = ( rand() % 255 ) & byte;
+            chip8.V[vx] = (rand() % 255) & byte;
             chip8.pc += 2;
             break;
 
@@ -263,12 +285,12 @@ void cpu_cycle() {
                 uint16_t y = chip8.V[vy];
                 uint16_t height = N;
                 uint16_t pixel;
- 
                 chip8.V[0xF] = 0;
+
                 for (size_t yline = 0; yline < height; ++yline) {
                     pixel = chip8.memory[chip8.I + yline];
                     for (size_t xline = 0; xline < 8; ++xline) {
-                        if ( (pixel & (0x80 >> xline)) != 0 ) {
+                        if ((pixel & (128 >> xline)) != 0) {
                             if ( chip8.gfx[(x + xline + ((y + yline) * 64))] == 1 ) {
                                 chip8.V[0xF] = 1;
                             }                                 
@@ -280,23 +302,26 @@ void cpu_cycle() {
                 chip8.pc += 2;
             }
             break;
+        
         case 0xE000:
             switch(byte)
             {
                 // Skip next instruction if key with the value of register Vx is pressed
                 case 0x9E:
                     if (chip8.keypad[chip8.V[vx]] == 1) { 
-                        chip8.pc += 2; 
+                        chip8.pc += 4; 
+                    } else {
+                        chip8.pc += 2;
                     }
-                    chip8.pc += 2;
                     break;
 
                 // Skip next instruction if key with the value of Vx is not pressed
                 case 0xA1:
                     if (chip8.keypad[chip8.V[vx]] == 0) {
-                        chip8.pc +=2; 
+                        chip8.pc += 4; 
+                    } else {
+                        chip8.pc += 2;
                     }
-                    chip8.pc += 2;
                     break;
 
                 default:
@@ -387,8 +412,5 @@ void cpu_cycle() {
     if (chip8.soundTimer) {
         --chip8.soundTimer;
         chip8.soundFlag = 1;
-    } 
-
-    // printing opcode 
-    //printf("[OK] 0x%x\n", chip8.opcode); 
+    }
 }

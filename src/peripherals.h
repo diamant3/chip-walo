@@ -1,27 +1,17 @@
 #ifndef PERIPHERALS_H
-    #define PERIPHERALS_H
+#define PERIPHERALS_H
 
-    // Resolution
-    #define SCALE         8
-    #define SCREEN_WIDTH  64
-    #define SCREEN_HEIGHT 32
+#define SCALE         8
+#define SCREEN_WIDTH  64
+#define SCREEN_HEIGHT 32
+#define SAMPLE_RATE 44100.0
+#define AMPLITUDE   28000
 
-    // audio Constants
-    #define SAMPLE_RATE 44100.0
-    #define AMPLITUDE   28000
-
-    //  gfx Functions
-    void init_graphics();
-    void draw_graphics();
-    void close_graphics();
-
-    // input functions
-    void key_press();
-
-    // audio handlers
-    void audio_callBack(void *userData, uint8_t *rawBuffer, int32_t bytes);
-    void init_audio();
-    void close_audio();
-    void beep_audio();
+void create_peripherals();
+void draw_pixel();
+void destroy_peripherals();
+void detect_key();
+void audio_callBack(void *userData, uint8_t *rawBuffer, int32_t bytes);
+void beep();
 
 #endif
