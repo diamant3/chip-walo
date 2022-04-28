@@ -1,94 +1,103 @@
+![chip-walo](images/chip-walo.gif)
+
 # chip-walo
 
-<center><img src="images/chip-walo.gif" width="480px"></center>
+![C](https://img.shields.io/badge/Language-c-gold?style=for-the-badge)
 
-![C](https://img.shields.io/badge/Code-C-green?style=for-the-badge)
-![SDL2](https://img.shields.io/badge/SDL2-blue?style=for-the-badge)
+## Table of Contents
 
-## Table of content
-
-1. [Intro](#chip-walo)
-2. [Game Samples](#game-samples)
-3. [Building](#building) 
-4. [Usage](#usage)
-5. [Credits](#credits)
+- [chip-walo](#chip-walo)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Features](#features)
+- [Game Sample](#game-sample)
+- [Building](#building)
+  - [Linux](#linux)
+  - [Windows](#windows)
+- [Usage](#usage)
+  - [Run](#run)
+  - [Input](#input)
+- [Credits](#credits)
+  - [Contribution](#contribution)
 
 ## Introduction
 
-CHIP-8 is an interpreted programming language which was initially used in the late 1970s. It was made to allow more easily programed game for those computers. All programs written in CHIP-8 are run on a virtual machine which interprets each instruction.
+CHIP-8 is an interpreted programming language which was initially used in the late 1970s. 
+
+It was made to allow more easily programed game for those computers. All programs written in CHIP-8 are run on a virtual machine which interprets each instruction.
 
 Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
-*"WALO" is from the tagalog word of number 8.*
+> The *walo* is the tagalog of number 8.
 
 ## Features
-- Working sound system
-- Cross-platform(Windows/Linux)
 
-# Game samples
+- Working sound
+- Cross-platform
 
-<center>
-  <img src="images/Space_Invaders.png" width="480px">
+# Game Sample
 
-  *Space Invaders*
-
-  <img src="images/Breakout.png" width="480px">
-
-  *Breakout*
-</center>
+**Space Invaders**
+![Space Invaders](images/Space_Invaders.png)
 
 # Building
 
 ## Linux
 
-Pre-requisites:
+Required:
 - gcc
 - make
 - libsdl2-dev
 
 Download the repo:
 
-```bash 
-git clone https://github.com/d4rkr4t/chip-walo.git
+```
+git clone https://github.com/diamant3/chip-walo.git
 ``` 
 
-After you download, run this:
+build chip-walo:
 
-```bash
-cd chip-walo 
 ```
-and this: 
-
-```bash
-make
+cd chip-walo && make
 ```
 
 ## Windows
 
-Pre-requisites:
+Required:
+
+- [scoop](https://scoop.sh/)
 - gcc
 - make
-- scoop
 
-**Install scoop first**, refer to this [GUIDE](https://scoop.sh/) how to install scoop.
+SDL2 Installation using scoop:
 
-After you install the scoop, run this:
-
-```bash
+```
 scoop bucket add extras && scoop install sdl2
 ```
 
-Download the [chip-walo](https://github.com/d4rkr4t/chip-walo/archive/refs/heads/main.zip).
+Download the repo:
 
-Extract the zip file then run this inside the folder:
+```
+git clone https://github.com/diamant3/chip-walo.git
+``` 
 
-```bash
-make
+build chip-walo:
+
+```
+cd chip-walo && make
 ```
 
-> [SDL2.dll](https://www.libsdl.org/download-2.0.php) is **REQUIRED**. Put it inside the ``` bin ``` folder.
+ > [SDL2 Runtime Binaries](https://www.libsdl.org/download-2.0.php) is **REQUIRED**. Put it inside the ``` bin ``` folder.
 
 # Usage
+
+## Run
+
+```
+cd bin && chip-walo PATH/OF/THE/ROM
+```
+
+## Input
 
 <table>
   <tr>
@@ -118,14 +127,6 @@ make
 </table>
 
 > This is the key mappings of the chip-walo, use keyboard to control.
-
-## Run
-
-```bash
-chip-walo PATH/OF/THE/ROM
-```
-
-> The executable file is located in ```bin``` folder.
 
 # Credits
 
