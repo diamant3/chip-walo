@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <assert.h>
 #include "system.h"
 
 Processor_t chip8;
@@ -30,7 +31,7 @@ void init_sys() {
     chip8.opcode = 0;
     chip8.sp = 0;
 
-    for (size_t font = 0; font < FONT_SET; ++font) {
+    for (uint8_t font = 0; font < FONT_SET; ++font) {
         chip8.memory[font] = fontSet[font];
     }
 }
@@ -41,9 +42,7 @@ void load_rom(char *rom) {
     FILE *file = NULL;
     
     // Check if file exist
-    if ((file = fopen(rom, "rb")) == NULL) {
-        return;
-    }
+    assert((file = fopen(rom, "rb")) != NULL);
 
     // Get the rom size & buffer
     fseek(file, 0, SEEK_END);
@@ -55,10 +54,9 @@ void load_rom(char *rom) {
     if (fread(romBuffer, 1, romSize, file) < 1 || romBuffer == NULL) {
         fclose(file);
         free(romBuffer);
-        return;
     }
 
-    for (size_t data = 0; data < romSize; ++data) {
+    for (uint8_t data = 0; data < romSize; ++data) {
         chip8.memory[START_ADDRESS + data] = romBuffer[data];
     }
     fclose(file);
@@ -74,7 +72,7 @@ void cpu_cycle() {
             switch (byte) {
                 // Clear the display
                 case 0xE0:
-                    for(size_t pixel_data = 0; pixel_data < GFX_SIZE; ++pixel_data) {
+                    for(uint8_t pixel_data = 0; pixel_data < GFX_SIZE; ++pixel_data) {
                         chip8.gfx[pixel_data] = 0;
                     }
                     chip8.pc += 2;
@@ -287,11 +285,11 @@ void cpu_cycle() {
                 uint16_t pixel;
                 chip8.V[0xF] = 0;
 
-                for (size_t yline = 0; yline < height; ++yline) {
+                for (uint8_t yline = 0; yline < height; ++yline) {
                     pixel = chip8.memory[chip8.I + yline];
-                    for (size_t xline = 0; xline < 8; ++xline) {
+                    for (uint8_t xline = 0; xline < 8; ++xline) {
                         if ((pixel & (128 >> xline)) != 0) {
-                            if ( chip8.gfx[(x + xline + ((y + yline) * 64))] == 1 ) {
+                            if (chip8.gfx[(x + xline + ((y + yline) * 64))] == 1) {
                                 chip8.V[0xF] = 1;
                             }                                 
                             chip8.gfx[(x + xline + ((y + yline) * 64)) % (GFX_SIZE)] ^= 1;
@@ -340,7 +338,7 @@ void cpu_cycle() {
 
                 // Wait for a key press, store the value of the key in register Vx
                 case 0x0A:
-                    for (size_t key = 0; key < KEY_LENGTH; ++key) {
+                    for (uint8_t key = 0; key < KEY_LENGTH; ++key) {
                         if(chip8.keypad[key] == 1) {
                             chip8.V[vx] = key;
                             chip8.pc += 2;
@@ -383,7 +381,7 @@ void cpu_cycle() {
                 
                 // Store registers V0 through Vx in memory starting at location I
                 case 0x55:
-                    for (size_t vi = 0; vi <= vx; ++vi) {
+                    for (uint8_t vi = 0; vi <= vx; ++vi) {
                         chip8.memory[chip8.I + vi] = chip8.V[vi];
                     }
                     chip8.pc += 2;
@@ -391,7 +389,7 @@ void cpu_cycle() {
 
                 // Read registers V0 through Vx from memory starting at location I
                 case 0x65:
-                    for (size_t vi = 0; vi <= vx; ++vi) {
+                    for (uint8_t vi = 0; vi <= vx; ++vi) {
                         chip8.V[vi] = chip8.memory[chip8.I + vi];
                     }
                     chip8.pc += 2;

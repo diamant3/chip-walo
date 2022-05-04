@@ -12,6 +12,7 @@ SDL_AudioSpec *want = NULL;
 SDL_AudioDeviceID audioDevice;
 uint8_t quit;
 uint16_t sampleNR;
+
 SDL_Scancode keymap[KEY_LENGTH] = {
   SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, // 1 2 3 4
   SDL_SCANCODE_Q, SDL_SCANCODE_W, SDL_SCANCODE_E, SDL_SCANCODE_R, // q w e r
@@ -22,9 +23,9 @@ SDL_Scancode keymap[KEY_LENGTH] = {
 void audio_callBack(void *userData, uint8_t *rawBuffer, int32_t bytes) {
     uint16_t* buffer = (uint16_t*)rawBuffer;
     uint16_t length = bytes / 2;
-    uint16_t sampleNR = (*(int32_t*) userData);
+    int32_t sampleNR = (*(int32_t*) userData);
 
-    for (size_t data = 0; data < length; data++, sampleNR++) {
+    for (uint16_t data = 0; data < length; data++, sampleNR++) {
         double_t time = (double_t)sampleNR / (double_t)SAMPLE_RATE;
         buffer[data] = (uint16_t)(AMPLITUDE * sin(2.0f * M_PI * 441.0f * time));
     }
@@ -41,8 +42,8 @@ void draw_pixel() {
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    for (size_t ycor = 0; ycor < SCREEN_HEIGHT; ++ycor) {
-        for (size_t xcor = 0; xcor < SCREEN_WIDTH; ++xcor) {
+    for (uint16_t ycor = 0; ycor < SCREEN_HEIGHT; ++ycor) {
+        for (uint16_t xcor = 0; xcor < SCREEN_WIDTH; ++xcor) {
             if (chip8.gfx[xcor + (ycor * SCREEN_WIDTH)]) {
                 rect.x = (xcor * SCALE);
                 rect.y = (ycor * SCALE);
@@ -63,7 +64,7 @@ void detect_key() {
                 quit = 1;
             break;
             default:
-                for (size_t key = 0; key < KEY_LENGTH; ++key) {
+                for (uint8_t key = 0; key < KEY_LENGTH; ++key) {
                     chip8.keypad[key] = state[keymap[key]];
                     if (state[SDL_SCANCODE_ESCAPE]) {
                         quit = 1;
@@ -86,7 +87,6 @@ void create_peripherals() {
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         printf("SDL Init failed: %s\n", SDL_GetError());
-        return;
     }
 
     window = SDL_CreateWindow(
@@ -100,13 +100,11 @@ void create_peripherals() {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
     if (window == NULL || renderer == NULL) {
         printf("Window creation failed: %s\n", SDL_GetError());
-        return;
     }
 
     audioDevice = SDL_OpenAudioDevice(NULL, 0, want, NULL, 0);
     if (audioDevice < 1) {
         printf("Failed to open audio: %s\n", SDL_GetError());
-        return;
     }
 }
 
