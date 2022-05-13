@@ -1,16 +1,15 @@
-![chip-walo](images/chip-walo.gif)
-
 # chip-walo
+
+CHIP-8 Emulator using C and SDL2.
 
 ![C](https://img.shields.io/badge/Language-c-gold?style=for-the-badge)
 
 ## Table of Contents
 
 - [chip-walo](#chip-walo)
-  - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Features](#features)
-- [Game Sample](#game-sample)
+- [Samples](#samples)
 - [Building](#building)
   - [Linux](#linux)
   - [Windows](#windows)
@@ -35,9 +34,10 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 - Working sound
 - Cross-platform
 
-# Game Sample
+# Samples
 
-**Space Invaders**
+![chip-walo](images/chip-walo.gif)
+
 ![Space Invaders](images/Space_Invaders.png)
 
 # Building
