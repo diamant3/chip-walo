@@ -7,6 +7,7 @@ CHIP-8 Emulator using C and SDL2.
 ## Table of Contents
 
 - [chip-walo](#chip-walo)
+  - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Features](#features)
 - [Samples](#samples)
@@ -27,7 +28,7 @@ It was made to allow more easily programed game for those computers. All program
 
 Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
-> The *walo* is the tagalog of number 8.
+> The word *walo* is tagalog of number 8
 
 ## Features
 
@@ -46,8 +47,8 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
 Required:
 - gcc
-- make
-- libsdl2-dev
+- unzip/7zip
+- [xmake](https://xmake.io/#/guide/installation)
 
 Download the repo:
 
@@ -58,21 +59,20 @@ git clone https://github.com/diamant3/chip-walo.git
 build chip-walo:
 
 ```
-cd chip-walo && make
+cd chip-walo && xmake
 ```
 
 ## Windows
 
 Required:
 
-- [scoop](https://scoop.sh/)
-- gcc
-- make
+- [xmake](https://xmake.io/#/guide/installation)
+- visual studio(MSVC)
 
 SDL2 Installation using scoop:
 
 ```
-scoop bucket add extras && scoop install sdl2
+xrepo install libsdl
 ```
 
 Download the repo:
@@ -84,17 +84,19 @@ git clone https://github.com/diamant3/chip-walo.git
 build chip-walo:
 
 ```
-cd chip-walo && make
+cd chip-walo && xmake
 ```
 
- > [SDL2 Runtime Binaries](https://www.libsdl.org/download-2.0.php) is **REQUIRED**. Put it inside the ``` bin ``` folder.
+ > [SDL2 Runtime Binaries](https://www.libsdl.org/download-2.0.php) is **REQUIRED**. 
+ 
+ > Put it inside the ``` build\windows\x64\release ``` folder.
 
 # Usage
 
 ## Run
 
 ```
-cd bin && chip-walo PATH/OF/THE/ROM
+xmake run chip-walo PATH/OF/THE/ROM
 ```
 
 ## Input
@@ -130,14 +132,14 @@ cd bin && chip-walo PATH/OF/THE/ROM
 
 # Credits
 
-[SDL2](https://www.libsdl.org/) - graphics API that i used to make this.<br>
-[scoop](https://scoop.sh/) - This is i used to fix the sdl2 dependencies.<br>
-[Cowgod](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM) - Heavily used for the references of op codes.<br>
-[Wikipedia](https://en.wikipedia.org/wiki/CHIP-8) - Another reference for op codes.<br>
-[Multigesture](https://multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/) - the emulation of graphics of chip-8 is mostly from here.<br>
-[Tobiasvl](https://tobiasvl.github.io/blog/write-a-chip-8-emulator/)- Clear explanation about chip-8 development.<br>
-[Chip-8](https://chip-8.github.io/links/) - Chip-8 Resources.<br>
-[Zophar.net](https://www.zophar.net/pdroms/chip8.html) - chip-8 ROMS.<br>
+- [SDL2](https://www.libsdl.org/)
+- [xmake](https://xmake.io/#/)
+- [Cowgod](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM)
+- [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
+- [Multigesture](https://multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/)
+- [Tobiasvl](https://tobiasvl.github.io/blog/write-a-chip-8-emulator/)
+- [Chip-8](https://chip-8.github.io/links/)
+- [Zophar.net](https://www.zophar.net/pdroms/chip8.html)
 
 ## Contribution
 
