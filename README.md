@@ -69,7 +69,7 @@ Required:
 - [xmake](https://xmake.io/#/guide/installation)
 - visual studio(MSVC)
 
-SDL2 Installation using scoop:
+SDL2 Installation using xmake package manager(xrepo):
 
 ```
 xrepo install libsdl
