@@ -101,34 +101,9 @@ xmake run chip-walo PATH/OF/THE/ROM
 
 ## Input
 
-<table>
-  <tr>
-      <td>1</td>
-      <td>2</td>
-      <td>3</td>
-      <td>4</td>
-  </tr>
-  <tr>
-      <td>Q</td>
-      <td>W</td>
-      <td>E</td>
-      <td>R</td>
-  </tr>
-  <tr>
-      <td>A</td>
-      <td>S</td>
-      <td>D</td>
-      <td>F</td>
-  </tr>
-  <tr>
-      <td>Z</td>
-      <td>X</td>
-      <td>C</td>
-      <td>V</td>
-  </tr>
-</table>
+![Keyboard Input](images/input.png)
 
-> This is the key mappings of the chip-walo, use keyboard to control.
+> This is the key mappings of the chip-walo.
 
 # Credits
 
