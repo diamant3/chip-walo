@@ -55,7 +55,7 @@ void cw_system_cpu_file_load(const uint8_t *rom) {
     FILE *file = NULL;
 
     // open the rom file
-    file = fopen(rom, "r");
+    file = fopen(rom, "rb");
     if (file != NULL)
     {
         // Get the rom size & buffer
@@ -107,7 +107,6 @@ void cw_system_cpu_cycle(void)
             {
                 // Clear the display
                 case 0xE0:
-                    printf("E0\n");
                     memset(chip8.system_graphic, 0, SCREEN_SIZE);
                     chip8.register_program_counter += 2;
                 break;

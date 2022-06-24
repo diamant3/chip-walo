@@ -18,11 +18,12 @@ CHIP-8 Emulator using C and SDL2.
   - [Run](#run)
   - [Input](#input)
 - [Credits](#credits)
+  - [Issue](#issue)
   - [Contribution](#contribution)
 
 ## Introduction
 
-CHIP-8 is an interpreted programming language which was initially used in the late 1970s. 
+CHIP-8 is an interpreted programming language which was initially used in the late 1970s.
 
 It was made to allow more easily programed game for those computers. All programs written in CHIP-8 are run on a virtual machine which interprets each instruction.
 
@@ -54,7 +55,7 @@ Download the repo:
 
 ```
 git clone https://github.com/diamant3/chip-walo.git
-``` 
+```
 
 build chip-walo:
 
@@ -79,7 +80,7 @@ Download the repo:
 
 ```
 git clone https://github.com/diamant3/chip-walo.git
-``` 
+```
 
 build chip-walo:
 
@@ -87,8 +88,8 @@ build chip-walo:
 cd chip-walo && xmake
 ```
 
- > [SDL2 Runtime Binaries](https://www.libsdl.org/download-2.0.php) is **REQUIRED**. 
- 
+ > [SDL2 Runtime Binaries](https://www.libsdl.org/download-2.0.php) is **REQUIRED**.
+
  > Put it inside the ``` build\windows\x64\release ``` folder.
 
 # Usage
@@ -100,6 +101,14 @@ xmake run chip-walo PATH/OF/THE/ROM
 ```
 
 ## Input
+
+**CHIP-8 Keypad**
+
+<img src="images/cosmac-vip-keyboard.png" width="285px">
+
+> Image source: [Tobiasvl](https://tobiasvl.github.io/blog/write-a-chip-8-emulator/)
+
+**PC Keyboard**
 
 ![Keyboard Input](images/input.png)
 
@@ -115,6 +124,10 @@ xmake run chip-walo PATH/OF/THE/ROM
 - [Tobiasvl](https://tobiasvl.github.io/blog/write-a-chip-8-emulator/)
 - [Chip-8](https://chip-8.github.io/links/)
 - [Zophar.net](https://www.zophar.net/pdroms/chip8.html)
+- [chip8-test-suite by Timendus](https://github.com/Timendus/chip8-test-suite)
+
+## Issue
+- Up/Down cursor not working in Timendus's chip8-test-suite, idk where's the problem, my chip8 or the test suite
 
 ## Contribution
 
