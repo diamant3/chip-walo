@@ -17,7 +17,7 @@
 #define AUDIO_SAMPLING_RATE 44100 /* sampling frequency of the audio */
 #define AUDIO_AMPLITUDE     28000 /* amplitude/loudness of the audio */
 
-// opcode shorthands 
+// opcode shorthands
 #define INSTR_POS_ADDR   (chip8.register_opcode & 0x0FFF) /* A 12-bit value, the lowest 12 bits of the instruction */
 #define INSTR_POS_BYTE   (chip8.register_opcode & 0x00FF) /* An 8-bit value, the lowest 8 bits of the instruction */
 #define INSTR_POS_NIBBLE (chip8.register_opcode & 0x000F) /* A 4-bit value, the lowest 4 bits of the instruction */
@@ -26,7 +26,6 @@
 
 // system constants
 #define SYSTEM_FONT_SIZE 80 /* size of built-in font set */
-#define MAX_FILE_SIZE    2048 /* rom file size limit */
 
 // memory constants
 #define STACK_SIZE           16   /* size of stack register */
@@ -40,10 +39,10 @@
 #define KEYPAD_LENGTH 16 /* number of keys in keypad */
 
 // chip-walo system struct
-typedef struct chip_walo 
+typedef struct chip_walo
 {
-    uint8_t register_v[REGISTER_SIZE]; 
-    uint8_t system_memory[MEMORY_SIZE]; 
+    uint8_t register_v[REGISTER_SIZE];
+    uint8_t system_memory[MEMORY_SIZE];
     uint8_t system_graphic[SCREEN_SIZE];
     uint8_t system_keypad[KEYPAD_LENGTH];
     uint8_t system_delay_timer;
@@ -79,7 +78,7 @@ void cw_peripheral_audio_destroy(void);
 // system/cpu functions
 
 void cw_system_cpu_file_load(const char *rom);
-void cw_system_cpu_cycle(void); 
+void cw_system_cpu_cycle(void);
 void cw_system_cpu_create(void);
 void cw_system_cpu_destroy(void);
 #endif

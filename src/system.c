@@ -35,15 +35,15 @@ void cw_system_cpu_destroy(void)
     chip8.register_program_counter = 0;
 }
 
-void cw_system_cpu_create(void) 
+void cw_system_cpu_create(void)
 {
     srand((uint32_t)time(NULL));
     chip8.register_index = 0;
     chip8.register_opcode = 0;
     chip8.register_stack_pointer = 0;
     chip8.register_program_counter = MEMORY_ADDRESS_START;
-    
-    for (uint32_t font = 0; font < SYSTEM_FONT_SIZE; ++font) 
+
+    for (uint32_t font = 0; font < SYSTEM_FONT_SIZE; ++font)
     {
         chip8.system_memory[font] = font_set[font];
     }
@@ -56,7 +56,7 @@ void cw_system_cpu_file_load(const uint8_t *rom) {
 
     // open the rom file
     file = fopen(rom, "r");
-    if (file != NULL) 
+    if (file != NULL)
     {
         // Get the rom size & buffer
         fseek(file, 0, SEEK_END);
@@ -64,29 +64,29 @@ void cw_system_cpu_file_load(const uint8_t *rom) {
         printf("ROM Size: %d\n", rom_size);
         rewind(file);
         rom_buffer = (uint8_t *) malloc(rom_size * (sizeof rom_buffer));
-    } 
-    else 
+    }
+    else
     {
         fprintf(stderr, "Opening file failed, Error: %s\n", strerror(errno));
     }
 
     // Check and Load the rom to memory
     uint32_t status = fread(rom_buffer, 1, rom_size, file);
-    if (status > 0) 
+    if (status > 0)
     {
-        if (rom_size < MAX_FILE_SIZE) 
+        if (rom_size < MEMORY_SIZE)
         {
-            for (uint32_t data = 0; data < rom_size; ++data) 
+            for (uint32_t data = 0; data < rom_size; ++data)
             {
                 chip8.system_memory[MEMORY_ADDRESS_START + data] = rom_buffer[data];
             }
-        } 
-        else 
+        }
+        else
         {
             fprintf(stderr, "Loading rom failed, Error: %s\n", strerror(errno));
         }
-    } 
-    else 
+    }
+    else
     {
         fprintf(stderr, "Loading rom failed, Error: %s\n", strerror(errno));
     }
@@ -95,15 +95,15 @@ void cw_system_cpu_file_load(const uint8_t *rom) {
     fclose(file);
 }
 
-void cw_system_cpu_cycle(void) 
+void cw_system_cpu_cycle(void)
 {
     chip8.register_opcode = chip8.system_memory[chip8.register_program_counter] << 8 \
-    | chip8.system_memory[chip8.register_program_counter + 1]; 
+    | chip8.system_memory[chip8.register_program_counter + 1];
 
-    switch (chip8.register_opcode & 0xF000) 
+    switch (chip8.register_opcode & 0xF000)
     {
         case 0x0000:
-            switch (INSTR_POS_BYTE) 
+            switch (INSTR_POS_BYTE)
             {
                 // Clear the display
                 case 0xE0:
@@ -140,11 +140,11 @@ void cw_system_cpu_cycle(void)
 
         // Skip next instruction if register Vx == byte
         case 0x3000:
-            if (chip8.register_v[INSTR_POS_X] == INSTR_POS_BYTE) 
-            { 
+            if (chip8.register_v[INSTR_POS_X] == INSTR_POS_BYTE)
+            {
                 chip8.register_program_counter += 4;
-            } 
-            else 
+            }
+            else
             {
                 chip8.register_program_counter += 2;
             }
@@ -152,11 +152,11 @@ void cw_system_cpu_cycle(void)
 
         // Skip next instruction if register Vx != byte
         case 0x4000:
-            if (chip8.register_v[INSTR_POS_X] != INSTR_POS_BYTE) 
+            if (chip8.register_v[INSTR_POS_X] != INSTR_POS_BYTE)
             {
-                chip8.register_program_counter += 4; 
-            } 
-            else 
+                chip8.register_program_counter += 4;
+            }
+            else
             {
                 chip8.register_program_counter += 2;
             }
@@ -164,11 +164,11 @@ void cw_system_cpu_cycle(void)
 
         // Skip next instruction if register Vx == register Vy
         case 0x5000:
-            if (chip8.register_v[INSTR_POS_X] == chip8.register_v[INSTR_POS_Y]) 
+            if (chip8.register_v[INSTR_POS_X] == chip8.register_v[INSTR_POS_Y])
             {
-                chip8.register_program_counter += 4; 
-            } 
-            else 
+                chip8.register_program_counter += 4;
+            }
+            else
             {
                 chip8.register_program_counter += 2;
             }
@@ -183,11 +183,11 @@ void cw_system_cpu_cycle(void)
        // Set register Vx = Vx + byte
         case 0x7000:
             chip8.register_v[INSTR_POS_X] += INSTR_POS_BYTE;
-            chip8.register_program_counter += 2;    
+            chip8.register_program_counter += 2;
         break;
 
         case 0x8000:
-            switch (INSTR_POS_NIBBLE) 
+            switch (INSTR_POS_NIBBLE)
             {
                 // Set register Vx = Vy
                 case 0x0:
@@ -220,11 +220,11 @@ void cw_system_cpu_cycle(void)
                         uint32_t result = chip8.register_v[INSTR_POS_X] + chip8.register_v[INSTR_POS_Y];
                         uint8_t overflow = false;
 
-                        if (result > 0xFF) 
+                        if (result > 0xFF)
                         {
                             overflow = true;
-                        } 
-                        else 
+                        }
+                        else
                         {
                             overflow = false;
                         }
@@ -246,7 +246,7 @@ void cw_system_cpu_cycle(void)
                             overflow = false;
                         }
 		    	        chip8.register_v[INSTR_POS_X] = chip8.register_v[INSTR_POS_X] - chip8.register_v[INSTR_POS_Y];
-			            chip8.register_v[0xF] = overflow;                    
+			            chip8.register_v[0xF] = overflow;
                         chip8.register_program_counter += 2;
                     }
                 break;
@@ -279,15 +279,15 @@ void cw_system_cpu_cycle(void)
                 break;
 
                 // Set register Vx = Vx SHL 1
-                case 0xE:       
+                case 0xE:
                 {
                     uint8_t overflow = false;
-                    
-                    if (chip8.register_v[INSTR_POS_X] >> 7) 
+
+                    if (chip8.register_v[INSTR_POS_X] >> 7)
                     {
                         overflow = 1;
-                    } 
-                    else 
+                    }
+                    else
                     {
                         overflow = false;
                     }
@@ -305,11 +305,11 @@ void cw_system_cpu_cycle(void)
 
         // Skip next instruction if register Vx != Vy
         case 0x9000:
-            if (chip8.register_v[INSTR_POS_X] != chip8.register_v[INSTR_POS_Y]) 
-            { 
-                chip8.register_program_counter += 4; 
-            } 
-            else 
+            if (chip8.register_v[INSTR_POS_X] != chip8.register_v[INSTR_POS_Y])
+            {
+                chip8.register_program_counter += 4;
+            }
+            else
             {
                 chip8.register_program_counter += 2;
             }
@@ -333,7 +333,7 @@ void cw_system_cpu_cycle(void)
         break;
 
         // Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision
-        case 0xD000:		   
+        case 0xD000:
             {
                 uint16_t x = chip8.register_v[INSTR_POS_X];
                 uint16_t y = chip8.register_v[INSTR_POS_Y];
@@ -341,17 +341,17 @@ void cw_system_cpu_cycle(void)
                 uint16_t pixel;
                 chip8.register_v[0xF] = false;
 
-                for (uint32_t yline = 0; yline < height; ++yline) 
+                for (uint32_t yline = 0; yline < height; ++yline)
                 {
                     pixel = chip8.system_memory[chip8.register_index + yline];
-                    for (uint32_t xline = 0; xline < 8; ++xline) 
+                    for (uint32_t xline = 0; xline < 8; ++xline)
                     {
-                        if ((pixel & (0x80 >> xline)) != 0) 
+                        if ((pixel & (0x80 >> xline)) != 0)
                         {
-                            if (chip8.system_graphic[((x + xline) + ((y + yline) * SCREEN_WIDTH))] == true) 
+                            if (chip8.system_graphic[((x + xline) + ((y + yline) * SCREEN_WIDTH))] == true)
                             {
                                 chip8.register_v[0xF] = true;
-                            }                                 
+                            }
                             chip8.system_graphic[((x + xline) + ((y + yline) * SCREEN_WIDTH))] ^= true;
                         }
                     }
@@ -360,17 +360,17 @@ void cw_system_cpu_cycle(void)
                 chip8.register_program_counter += 2;
             }
         break;
-        
+
         case 0xE000:
             switch(INSTR_POS_BYTE)
             {
                 // Skip next instruction if key with the value of register Vx is pressed
                 case 0x9E:
-                    if (chip8.system_keypad[chip8.register_v[INSTR_POS_X]] == true) 
-                    { 
-                        chip8.register_program_counter += 4; 
-                    } 
-                    else 
+                    if (chip8.system_keypad[chip8.register_v[INSTR_POS_X]] == true)
+                    {
+                        chip8.register_program_counter += 4;
+                    }
+                    else
                     {
                         chip8.register_program_counter += 2;
                     }
@@ -378,11 +378,11 @@ void cw_system_cpu_cycle(void)
 
                 // Skip next instruction if key with the value of Vx is not pressed
                 case 0xA1:
-                    if (chip8.system_keypad[chip8.register_v[INSTR_POS_X]] == false) 
+                    if (chip8.system_keypad[chip8.register_v[INSTR_POS_X]] == false)
                     {
-                        chip8.register_program_counter += 4; 
-                    } 
-                    else 
+                        chip8.register_program_counter += 4;
+                    }
+                    else
                     {
                         chip8.register_program_counter += 2;
                     }
@@ -405,9 +405,9 @@ void cw_system_cpu_cycle(void)
 
                 // Wait for a key press, store the value of the key in register Vx
                 case 0x0A:
-                    for (uint32_t key = 0; key < KEYPAD_LENGTH; ++key) 
+                    for (uint32_t key = 0; key < KEYPAD_LENGTH; ++key)
                     {
-                        if (chip8.system_keypad[key] == true) 
+                        if (chip8.system_keypad[key] == true)
                         {
                             chip8.register_v[INSTR_POS_X] = key;
                             chip8.register_program_counter += 2;
@@ -421,7 +421,7 @@ void cw_system_cpu_cycle(void)
                     chip8.system_delay_timer = chip8.register_v[INSTR_POS_X];
                     chip8.register_program_counter += 2;
                 break;
-                
+
                 // Set sound timer = Vx
                 case 0x18:
                     chip8.system_sound_timer = chip8.register_v[INSTR_POS_X];
@@ -447,10 +447,10 @@ void cw_system_cpu_cycle(void)
                     chip8.system_memory[chip8.register_index + 2] = chip8.register_v[INSTR_POS_X] % 10;
                     chip8.register_program_counter += 2;
                 break;
-                
+
                 // Store registers V0 through Vx in memory starting at location I
                 case 0x55:
-                    for (uint32_t vi = 0; vi <= INSTR_POS_X; ++vi) 
+                    for (uint32_t vi = 0; vi <= INSTR_POS_X; ++vi)
                     {
                         chip8.system_memory[chip8.register_index + vi] = chip8.register_v[vi];
                     }
@@ -459,7 +459,7 @@ void cw_system_cpu_cycle(void)
 
                 // Read registers V0 through Vx from memory starting at location I
                 case 0x65:
-                    for (uint32_t vi = 0; vi <= INSTR_POS_X; ++vi) 
+                    for (uint32_t vi = 0; vi <= INSTR_POS_X; ++vi)
                     {
                         chip8.register_v[vi] = chip8.system_memory[chip8.register_index + vi];
                     }
@@ -471,15 +471,15 @@ void cw_system_cpu_cycle(void)
                 break;
             }
         break;
-    }  
+    }
 
     // Update Timers
-    if (chip8.system_delay_timer > 0) 
+    if (chip8.system_delay_timer > 0)
     {
         --chip8.system_delay_timer;
     }
 
-    if (chip8.system_sound_timer > 0) 
+    if (chip8.system_sound_timer > 0)
     {
         --chip8.system_sound_timer;
         chip8.register_sound_flag = true;
