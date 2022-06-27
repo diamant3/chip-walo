@@ -77,7 +77,7 @@ void cw_peripheral_audio_destroy(void);
 
 // system/cpu functions
 
-void cw_system_cpu_file_load(const char *rom);
+void cw_system_cpu_file_load(const uint8_t *rom);
 void cw_system_cpu_cycle(void);
 void cw_system_cpu_create(void);
 void cw_system_cpu_destroy(void);

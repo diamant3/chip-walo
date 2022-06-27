@@ -1,6 +1,9 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <math.h>
+#ifndef  M_PI
+#define  M_PI  3.1415926535897932384626433
+#endif
 
 #include "common.h"
 
@@ -13,7 +16,7 @@ static inline void cw_peripheral_audio_callback(void *userData, uint16_t *rawBuf
     uint32_t length = bytes / 2;
     sampleNR = *(uint32_t *)userData;
 
-    for (int32_t data = 0; data < length; ++data, ++sampleNR) 
+    for (int32_t data = 0; data < length; ++data, ++sampleNR)
     {
         double_t time = (double_t)sampleNR / (double_t)AUDIO_SAMPLING_RATE;
         buffer[data] = (uint32_t)(AUDIO_AMPLITUDE * sin(2.0 * M_PI * 441.0 * time));
