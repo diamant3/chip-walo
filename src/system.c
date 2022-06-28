@@ -238,13 +238,14 @@ void cw_system_cpu_cycle(void)
                     {
                         chip8.register_v[0xF] = false;
                         uint8_t overflow = false;
+                        uint8_t result = chip8.register_v[INSTR_POS_X] - chip8.register_v[INSTR_POS_Y];
 
-                        if (chip8.register_v[INSTR_POS_X] >= chip8.register_v[INSTR_POS_Y]) {
+                        if (chip8.register_v[INSTR_POS_X] > chip8.register_v[INSTR_POS_Y]) {
                             overflow = true;
                         } else {
                             overflow = false;
                         }
-		    	        chip8.register_v[INSTR_POS_X] = chip8.register_v[INSTR_POS_X] - chip8.register_v[INSTR_POS_Y];
+		    	        chip8.register_v[INSTR_POS_X] = result;
 			            chip8.register_v[0xF] = overflow;
                         chip8.register_program_counter += 2;
                     }
@@ -265,13 +266,14 @@ void cw_system_cpu_cycle(void)
                     {
                         chip8.register_v[0xF] = false;
                         uint8_t overflow = false;
+                        uint8_t result = chip8.register_v[INSTR_POS_Y] - chip8.register_v[INSTR_POS_X];
 
-                        if (chip8.register_v[INSTR_POS_Y] >= chip8.register_v[INSTR_POS_X]) {
+                        if (chip8.register_v[INSTR_POS_X] > chip8.register_v[INSTR_POS_Y]) {
                             overflow = true;
                         } else {
                             overflow = false;
                         }
-			            chip8.register_v[INSTR_POS_X] = chip8.register_v[INSTR_POS_Y] - chip8.register_v[INSTR_POS_X];
+			            chip8.register_v[INSTR_POS_X] = result;
 			            chip8.register_v[0xF] = overflow;
                         chip8.register_program_counter += 2;
                     }
