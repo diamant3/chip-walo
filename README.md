@@ -126,9 +126,6 @@ xmake run chip-walo PATH/OF/THE/ROM
 - [Zophar.net](https://www.zophar.net/pdroms/chip8.html)
 - [chip8-test-suite by Timendus](https://github.com/Timendus/chip8-test-suite)
 
-## Issue
-- Up/Down cursor not working in Timendus's chip8-test-suite, idk where's the problem, my chip8 or the test suite
-
 ## Contribution
 
 This is an educational project and feel free to contribute!
