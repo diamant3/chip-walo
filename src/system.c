@@ -236,15 +236,15 @@ void cw_system_cpu_cycle(void)
                 // Set register Vx = Vx - Vy, Set register Vf = NOT borrow
                 case 0x5:
                     {
-                        chip8.register_v[0xF] = false;
                         uint8_t overflow = false;
+                        uint8_t result = chip8.register_v[INSTR_POS_X] - chip8.register_v[INSTR_POS_Y];
 
-                        if (chip8.register_v[INSTR_POS_X] >= chip8.register_v[INSTR_POS_Y]) {
-                            overflow = true;
-                        } else {
+                        if (chip8.register_v[INSTR_POS_Y] > chip8.register_v[INSTR_POS_X]) {
                             overflow = false;
+                        } else {
+                            overflow = true;
                         }
-		    	        chip8.register_v[INSTR_POS_X] = chip8.register_v[INSTR_POS_X] - chip8.register_v[INSTR_POS_Y];
+		    	        chip8.register_v[INSTR_POS_X] = result;
 			            chip8.register_v[0xF] = overflow;
                         chip8.register_program_counter += 2;
                     }
@@ -263,15 +263,15 @@ void cw_system_cpu_cycle(void)
                 // Set register Vx = Vy - Vx, Set register Vf = NOT borrow
                 case 0x7:
                     {
-                        chip8.register_v[0xF] = false;
                         uint8_t overflow = false;
+                        uint8_t result = chip8.register_v[INSTR_POS_Y] - chip8.register_v[INSTR_POS_X];
 
-                        if (chip8.register_v[INSTR_POS_Y] >= chip8.register_v[INSTR_POS_X]) {
-                            overflow = true;
-                        } else {
+                        if (chip8.register_v[INSTR_POS_X] > chip8.register_v[INSTR_POS_Y]) {
                             overflow = false;
+                        } else {
+                            overflow = true;
                         }
-			            chip8.register_v[INSTR_POS_X] = chip8.register_v[INSTR_POS_Y] - chip8.register_v[INSTR_POS_X];
+			            chip8.register_v[INSTR_POS_X] = result;
 			            chip8.register_v[0xF] = overflow;
                         chip8.register_program_counter += 2;
                     }
