@@ -1,14 +1,14 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <errno.h>
+#include <time.h>
 
-#include "common.h"
+#include "system.h"
 
-chip_walo_st chip8;
-
-uint8_t font_set[SYSTEM_FONT_SIZE] = {
+static const uint8_t font_set[FONT_LENGTH] = {
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     0x20, 0x60, 0x20, 0x20, 0x70, // 1
     0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -27,389 +27,321 @@ uint8_t font_set[SYSTEM_FONT_SIZE] = {
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
-void cw_system_cpu_destroy(void)
-{
-    chip8.register_index = 0;
-    chip8.register_opcode = 0;
-    chip8.register_stack_pointer = 0;
-    chip8.register_program_counter = 0;
-}
-
-void cw_system_cpu_create(void)
-{
+void core_init(Chip_walo *cw) {
     srand((uint32_t)time(NULL));
-    chip8.register_index = 0;
-    chip8.register_opcode = 0;
-    chip8.register_stack_pointer = 0;
-    chip8.register_program_counter = MEMORY_ADDRESS_START;
+    cw->I = 0;
+    cw->opcode = 0;
+    cw->SP = 0;
+    memset(cw->gfx, 0, SCREEN_SIZE);
+    memset(cw->stack, 0, STACK_SIZE);
+    memset(cw->keypad, 0, 16);
+    memset(cw->reg_v, 0, REGISTER_COUNT);
+    cw->PC = MEMORY_ADDRESS_START;
 
-    for (uint32_t font = 0; font < SYSTEM_FONT_SIZE; ++font)
-    {
-        chip8.system_memory[font] = font_set[font];
+    for (uint32_t font = 0; font < FONT_LENGTH; ++font) {
+        cw->mem[font] = font_set[font];
     }
 }
 
-void cw_system_cpu_file_load(const uint8_t *rom) {
+void core_load(Chip_walo *cw, const uint8_t *rom) {
     uint64_t rom_size;
     uint8_t *rom_buffer = NULL;
     FILE *file = NULL;
 
     // open the rom file
     file = fopen(rom, "rb");
-    if (file != NULL)
-    {
+    if (file != NULL) {
         // Get the rom size & buffer
         fseek(file, 0, SEEK_END);
         rom_size = ftell(file);
-        printf("ROM Size: %d\n", rom_size);
+        printf("ROM Size: %lld Kb\n", rom_size);
         rewind(file);
-        rom_buffer = (uint8_t *) malloc(rom_size * (sizeof rom_buffer));
-    }
-    else
-    {
+        rom_buffer = (uint8_t *) malloc(rom_size * (sizeof(rom_buffer[0])));
+    } else {
         fprintf(stderr, "Opening file failed, Error: %s\n", strerror(errno));
+        return;
     }
 
     // Check and Load the rom to memory
-    uint32_t status = fread(rom_buffer, 1, rom_size, file);
-    if (status > 0)
-    {
-        if (rom_size < MEMORY_SIZE)
-        {
-            for (uint32_t data = 0; data < rom_size; ++data)
-            {
-                chip8.system_memory[MEMORY_ADDRESS_START + data] = rom_buffer[data];
+    size_t status = fread(rom_buffer, 1, rom_size, file);
+    if (status > 0) {
+        if (rom_size <= (MEMORY_SIZE - MEMORY_ADDRESS_START)) {
+            for (uint32_t data = 0; data < rom_size; ++data) {
+                cw->mem[MEMORY_ADDRESS_START + data] = rom_buffer[data];
             }
+        } else {
+            printf("Loading rom failed, Error: rom size exceeded.\n");
+            return;
         }
-        else
-        {
-            fprintf(stderr, "Loading rom failed, Error: %s\n", strerror(errno));
-        }
-    }
-    else
-    {
-        fprintf(stderr, "Loading rom failed, Error: %s\n", strerror(errno));
+    } else {
+        printf("Loading rom failed, Error: failed to read the file.\n");
+        return;
     }
 
     free(rom_buffer);
     fclose(file);
 }
 
-void cw_system_cpu_cycle(void)
-{
-    chip8.register_opcode = chip8.system_memory[chip8.register_program_counter] << 8 \
-    | chip8.system_memory[chip8.register_program_counter + 1];
+void core_cycle(Chip_walo *cw) {
+    cw->opcode = (cw->mem[cw->PC] << 8) | cw->mem[cw->PC + 1];
 
-    switch (chip8.register_opcode & 0xF000)
-    {
+    switch (cw->opcode & 0xF000) {
         case 0x0000:
-            switch (INSTR_POS_BYTE)
-            {
+            switch (BYTE) {
                 // Clear the display
                 case 0xE0:
-                    memset(chip8.system_graphic, 0, SCREEN_SIZE);
-                    chip8.register_program_counter += 2;
+                    memset(cw->gfx, 0, SCREEN_SIZE);
+                    cw->draw_flag = true;
+                    cw->PC += 2;
                 break;
 
                 // Return from a subroutine
                 case 0xEE:
-                    --chip8.register_stack_pointer;
-                    chip8.register_program_counter = chip8.register_stack[chip8.register_stack_pointer];
-                    chip8.register_program_counter += 2;
+                    cw->PC = cw->stack[--cw->SP];
+                    cw->PC += 2;
                 break;
 
                 default:
-                    printf("Unknown op code: %x\n", chip8.register_opcode);
+                    printf("UNKNOWN OPCODE: 0x%x\n", cw->opcode);
                 break;
             }
             break;
         break;
 
-        // Jump to location NNN
+        // Jump to location ADDR
         case 0x1000:
-            chip8.register_program_counter = INSTR_POS_ADDR;
+            cw->PC = ADDR;
         break;
 
-        // Call subroutine at NNN
+        // Call a subroutine at ADDR
         case 0x2000:
-            chip8.register_stack[chip8.register_stack_pointer] = chip8.register_program_counter;
-            ++chip8.register_stack_pointer;
-            chip8.register_program_counter = INSTR_POS_ADDR;
+            cw->stack[cw->SP] = cw->PC;
+            ++cw->SP;
+            cw->PC = ADDR;
         break;
 
         // Skip next instruction if register Vx == byte
         case 0x3000:
-            if (chip8.register_v[INSTR_POS_X] == INSTR_POS_BYTE)
-            {
-                chip8.register_program_counter += 4;
-            }
-            else
-            {
-                chip8.register_program_counter += 2;
+            if (cw->reg_v[X] == BYTE) {
+                cw->PC += 4;
+            } else {
+                cw->PC += 2;
             }
         break;
 
         // Skip next instruction if register Vx != byte
         case 0x4000:
-            if (chip8.register_v[INSTR_POS_X] != INSTR_POS_BYTE)
-            {
-                chip8.register_program_counter += 4;
-            }
-            else
-            {
-                chip8.register_program_counter += 2;
+            if (cw->reg_v[X] != BYTE) {
+                cw->PC += 4;
+            } else {
+                cw->PC += 2;
             }
         break;
 
         // Skip next instruction if register Vx == register Vy
         case 0x5000:
-            if (chip8.register_v[INSTR_POS_X] == chip8.register_v[INSTR_POS_Y])
-            {
-                chip8.register_program_counter += 4;
-            }
-            else
-            {
-                chip8.register_program_counter += 2;
+            if (cw->reg_v[X] == cw->reg_v[Y]) {
+                cw->PC += 4;
+            } else {
+                cw->PC += 2;
             }
         break;
 
         // Set register Vx = byte
         case 0x6000:
-            chip8.register_v[INSTR_POS_X] = INSTR_POS_BYTE;
-            chip8.register_program_counter += 2;
+            cw->reg_v[X] = BYTE;
+            cw->PC += 2;
         break;
 
        // Set register Vx = Vx + byte
         case 0x7000:
-            chip8.register_v[INSTR_POS_X] += INSTR_POS_BYTE;
-            chip8.register_program_counter += 2;
+            cw->reg_v[X] += BYTE;
+            cw->PC += 2;
         break;
 
         case 0x8000:
-            switch (INSTR_POS_NIBBLE)
+            switch (NIBBLE)
             {
                 // Set register Vx = Vy
                 case 0x0:
-                    chip8.register_v[INSTR_POS_X] = chip8.register_v[INSTR_POS_Y];
-                    chip8.register_program_counter += 2;
+                    cw->reg_v[X] = cw->reg_v[Y];
+                    cw->PC += 2;
                 break;
 
                 // Set register Vx = Vx OR Vy
                 case 0x1:
-                    chip8.register_v[INSTR_POS_X] |= chip8.register_v[INSTR_POS_Y];
-                    chip8.register_program_counter += 2;
+                    cw->reg_v[X] |= cw->reg_v[Y];
+                    cw->PC += 2;
                 break;
 
                 // Set register Vx = Vx AND Vy
                 case 0x2:
-                    chip8.register_v[INSTR_POS_X] &= chip8.register_v[INSTR_POS_Y];
-                    chip8.register_program_counter += 2;
+                    cw->reg_v[X] &= cw->reg_v[Y];
+                    cw->PC += 2;
                 break;
 
                 // Set register Vx = Vx XOR Vy
                 case 0x3:
-                    chip8.register_v[INSTR_POS_X] ^= chip8.register_v[INSTR_POS_Y];
-                    chip8.register_program_counter += 2;
+                    cw->reg_v[X] ^= cw->reg_v[Y];
+                    cw->PC += 2;
                 break;
 
-                // Set register Vx = Vx + Vy, Set register Vf = 1 if overflow
-                case 0x4:
-                    {
-                        chip8.register_v[0xF] = false;
-                        uint32_t result = chip8.register_v[INSTR_POS_X] + chip8.register_v[INSTR_POS_Y];
-                        uint8_t overflow = false;
+                // Set register Vx = Vx + Vy, Set register Vf = 1 (Carry)
+                case 0x4: {
+                    uint16_t result = cw->reg_v[X] + cw->reg_v[Y];
 
-                        if (result > 0xFF)
-                        {
-                            overflow = true;
-                        }
-                        else
-                        {
-                            overflow = false;
-                        }
-                        chip8.register_v[INSTR_POS_X] = result & 0xFF;
-                        chip8.register_v[0xF] = overflow;
-                        chip8.register_program_counter += 2;
+                    if (result > 0xFF) {
+                        cw->reg_v[0xF] = true;
+                    } else {
+                        cw->reg_v[0xF] = false;
                     }
+                    cw->reg_v[X] = (result & 0xFF);
+                    cw->PC += 2;
+                }
                 break;
 
                 // Set register Vx = Vx - Vy, Set register Vf = NOT borrow
-                case 0x5:
-                    {
-                        uint8_t overflow = false;
-                        uint8_t result = chip8.register_v[INSTR_POS_X] - chip8.register_v[INSTR_POS_Y];
+                case 0x5: {
+                    uint8_t result = cw->reg_v[X] - cw->reg_v[Y];
 
-                        if (chip8.register_v[INSTR_POS_Y] > chip8.register_v[INSTR_POS_X]) {
-                            overflow = false;
-                        } else {
-                            overflow = true;
-                        }
-		    	        chip8.register_v[INSTR_POS_X] = result;
-			            chip8.register_v[0xF] = overflow;
-                        chip8.register_program_counter += 2;
+                    if (cw->reg_v[X] > cw->reg_v[Y]) {
+                        cw->reg_v[0xF] = true;
+                    } else {
+                        cw->reg_v[0xF] = false;
                     }
+                    cw->reg_v[X] = result;
+                    cw->PC += 2;
+                }
                 break;
 
                 // Set register Vx = Vx SHR 1
                 case 0x6:
-                    {
-                        uint8_t overflow = chip8.register_v[INSTR_POS_X] & 1;
-                        chip8.register_v[INSTR_POS_X] >>= 1;
-                        chip8.register_v[0xF] = overflow;
-                        chip8.register_program_counter += 2;
-                    }
+                    cw->reg_v[X] >>= 1;
+                    cw->reg_v[0xF] = (cw->reg_v[X] & 8) ? false : true;
+                    cw->PC += 2;
                 break;
 
                 // Set register Vx = Vy - Vx, Set register Vf = NOT borrow
-                case 0x7:
-                    {
-                        uint8_t overflow = false;
-                        uint8_t result = chip8.register_v[INSTR_POS_Y] - chip8.register_v[INSTR_POS_X];
+                case 0x7: {
+                    uint8_t result = cw->reg_v[Y] - cw->reg_v[X];
 
-                        if (chip8.register_v[INSTR_POS_X] > chip8.register_v[INSTR_POS_Y]) {
-                            overflow = false;
-                        } else {
-                            overflow = true;
-                        }
-			            chip8.register_v[INSTR_POS_X] = result;
-			            chip8.register_v[0xF] = overflow;
-                        chip8.register_program_counter += 2;
+                    if (cw->reg_v[Y] > cw->reg_v[X]) {
+                        cw->reg_v[0xF] = true;
+                    } else {
+                        cw->reg_v[0xF] = false;
                     }
+                    cw->reg_v[X] = result;
+                    cw->PC += 2;
+                }
                 break;
 
                 // Set register Vx = Vx SHL 1
                 case 0xE:
-                {
-                    uint8_t overflow = false;
-
-                    if (chip8.register_v[INSTR_POS_X] >> 7)
-                    {
-                        overflow = 1;
-                    }
-                    else
-                    {
-                        overflow = false;
-                    }
-                    chip8.register_v[INSTR_POS_X] <<= 1;
-                    chip8.register_v[0xF] = overflow;
-                    chip8.register_program_counter += 2;
-                }
+                    cw->reg_v[X] <<= 1;
+                    cw->reg_v[0xF] = (cw->reg_v[X] >> 7) ? true : false;
+                    cw->PC += 2;
                 break;
 
                 default:
-                    printf("Unknown op code: %x\n", chip8.register_opcode);
+                    printf("UNKNOWN OPCODE: 0x%x\n", cw->opcode);
                 break;
             }
             break;
 
         // Skip next instruction if register Vx != Vy
         case 0x9000:
-            if (chip8.register_v[INSTR_POS_X] != chip8.register_v[INSTR_POS_Y])
-            {
-                chip8.register_program_counter += 4;
-            }
-            else
-            {
-                chip8.register_program_counter += 2;
+            if (cw->reg_v[X] != cw->reg_v[Y]) {
+                cw->PC += 4;
+            } else {
+                cw->PC += 2;
             }
         break;
 
         // Set I = NNN
         case 0xA000:
-            chip8.register_index = INSTR_POS_ADDR;
-            chip8.register_program_counter += 2;
+            cw->I = ADDR;
+            cw->PC += 2;
         break;
 
         // Jump to location NNN + register V0
         case 0xB000:
-            chip8.register_program_counter = chip8.register_v[0] + INSTR_POS_ADDR;
+            cw->PC = (ADDR + cw->reg_v[0]);
         break;
 
         // Set register Vx = random byte AND byte
-        case 0xC000:
-            chip8.register_v[INSTR_POS_X] = (rand() % 256) & INSTR_POS_BYTE;
-            chip8.register_program_counter += 2;
+        case 0xC000: {
+            uint8_t random = (rand() % 256);
+            cw->reg_v[X] = (random & BYTE);
+            cw->PC += 2;
+        }
         break;
 
         // Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision
-        case 0xD000:
-            {
-                uint16_t x = chip8.register_v[INSTR_POS_X];
-                uint16_t y = chip8.register_v[INSTR_POS_Y];
-                uint16_t height = INSTR_POS_NIBBLE;
-                uint16_t pixel;
-                chip8.register_v[0xF] = false;
+        case 0xD000: {
+                uint32_t x = cw->reg_v[X];
+                uint32_t y = cw->reg_v[Y];
+                uint32_t height = NIBBLE;
+                uint32_t px = 0;
+                cw->reg_v[0xF] = false;
 
-                for (uint32_t yline = 0; yline < height; ++yline)
-                {
-                    pixel = chip8.system_memory[chip8.register_index + yline];
-                    for (uint32_t xline = 0; xline < 8; ++xline)
-                    {
-                        if ((pixel & (0x80 >> xline)) != 0)
-                        {
-                            if (chip8.system_graphic[((x + xline) + ((y + yline) * SCREEN_WIDTH))] == true)
-                            {
-                                chip8.register_v[0xF] = true;
+                for (uint32_t yline = 0; yline < height; ++yline) {
+                    px = cw->mem[cw->I + yline];
+                    for (uint32_t xline = 0; xline < 8; ++xline) {
+                        if ((px & (0x80 >> xline)) != 0) {
+                            if (cw->gfx[x + xline + ((y + yline) * SCREEN_WIDTH) % (SCREEN_WIDTH * SCREEN_HEIGHT)] == true) {
+                                cw->reg_v[0xF] = true; // Collision
+                            } else {
+                                cw->reg_v[0xF] = false;
                             }
-                            chip8.system_graphic[((x + xline) + ((y + yline) * SCREEN_WIDTH))] ^= true;
+                            cw->gfx[((x + xline) + ((y + yline) * SCREEN_WIDTH))] ^= 1;
                         }
                     }
                 }
-                chip8.register_draw_flag = true;
-                chip8.register_program_counter += 2;
+                cw->draw_flag = true;
+                cw->PC += 2;
             }
         break;
 
         case 0xE000:
-            switch(INSTR_POS_BYTE)
-            {
+            switch(BYTE) {
                 // Skip next instruction if key with the value of register Vx is pressed
                 case 0x9E:
-                    if (chip8.system_keypad[chip8.register_v[INSTR_POS_X]] == true)
-                    {
-                        chip8.register_program_counter += 4;
-                    }
-                    else
-                    {
-                        chip8.register_program_counter += 2;
+                    if (cw->keypad[cw->reg_v[X]] == true) {
+                        cw->PC += 4;
+                    } else {
+                        cw->PC += 2;
                     }
                 break;
 
                 // Skip next instruction if key with the value of Vx is not pressed
                 case 0xA1:
-                    if (chip8.system_keypad[chip8.register_v[INSTR_POS_X]] == false)
-                    {
-                        chip8.register_program_counter += 4;
-                    }
-                    else
-                    {
-                        chip8.register_program_counter += 2;
+                    if (cw->keypad[cw->reg_v[X]] == false) {
+                        cw->PC += 4;
+                    } else {
+                        cw->PC += 2;
                     }
                 break;
 
                 default:
-                    printf("Unknown op code: %x\n", chip8.register_opcode);
+                    printf("UNKNOWN OPCODE: 0x%x\n", cw->opcode);
                 break;
             }
         break;
 
         case 0xF000:
-            switch (INSTR_POS_BYTE)
-            {
+            switch (BYTE) {
                 // Set register Vx = delay timer value
                 case 0x07:
-                    chip8.register_v[INSTR_POS_X] = chip8.system_delay_timer;
-                    chip8.register_program_counter += 2;
+                    cw->reg_v[X] = cw->DT;
+                    cw->PC += 2;
                 break;
 
                 // Wait for a key press, store the value of the key in register Vx
                 case 0x0A:
-                    for (uint32_t key = 0; key < KEYPAD_LENGTH; ++key)
-                    {
-                        if (chip8.system_keypad[key] == true)
-                        {
-                            chip8.register_v[INSTR_POS_X] = key;
-                            chip8.register_program_counter += 2;
+                    for (uint8_t key = 0; key < 16; ++key) {
+                        if (cw->keypad[key] == true) {
+                            cw->reg_v[X] = key;
+                            cw->PC += 2;
                             break;
                         }
                     }
@@ -417,70 +349,66 @@ void cw_system_cpu_cycle(void)
 
                 // Set delay timer = register Vx
                 case 0x15:
-                    chip8.system_delay_timer = chip8.register_v[INSTR_POS_X];
-                    chip8.register_program_counter += 2;
+                    cw->DT = cw->reg_v[X];
+                    cw->PC += 2;
                 break;
 
                 // Set sound timer = Vx
                 case 0x18:
-                    chip8.system_sound_timer = chip8.register_v[INSTR_POS_X];
-                    chip8.register_program_counter += 2;
+                    cw->ST = cw->reg_v[X];
+                    cw->PC += 2;
                 break;
 
                 // Set I = I + register Vx
                 case 0x1E:
-                    chip8.register_index += chip8.register_v[INSTR_POS_X];
-                    chip8.register_program_counter += 2;
+                    cw->I += cw->reg_v[X];
+                    cw->PC += 2;
                 break;
 
                 // Set I = location of sprite for digit register Vx
                 case 0x29:
-                    chip8.register_index = (chip8.register_v[INSTR_POS_X] * 5);
-                    chip8.register_program_counter += 2;
+                    cw->I = (cw->reg_v[X] * 5);
+                    cw->PC += 2;
                 break;
 
                 // Store BCD representation of register Vx in memory locations I, I+1, and I+2
                 case 0x33:
-                    chip8.system_memory[chip8.register_index] = (chip8.register_v[INSTR_POS_X] / 100) % 10;
-                    chip8.system_memory[chip8.register_index + 1] = (chip8.register_v[INSTR_POS_X] / 10) % 10;
-                    chip8.system_memory[chip8.register_index + 2] = chip8.register_v[INSTR_POS_X] % 10;
-                    chip8.register_program_counter += 2;
+                    cw->mem[cw->I] = (cw->reg_v[X] / 100);
+                    cw->mem[cw->I + 1] = (cw->reg_v[X] / 10) % 10;
+                    cw->mem[cw->I + 2] = (cw->reg_v[X] % 100) % 10;
+                    cw->PC += 2;
                 break;
 
                 // Store registers V0 through Vx in memory starting at location I
                 case 0x55:
-                    for (uint32_t vi = 0; vi <= INSTR_POS_X; ++vi)
-                    {
-                        chip8.system_memory[chip8.register_index + vi] = chip8.register_v[vi];
+                    for (uint32_t v = 0; v <= X; ++v) {
+                        cw->mem[cw->I + v] = cw->reg_v[v];
                     }
-                    chip8.register_program_counter += 2;
+                    cw->PC += 2;
                 break;
 
                 // Read registers V0 through Vx from memory starting at location I
                 case 0x65:
-                    for (uint32_t vi = 0; vi <= INSTR_POS_X; ++vi)
-                    {
-                        chip8.register_v[vi] = chip8.system_memory[chip8.register_index + vi];
+                    for (uint32_t v = 0;v <= X; ++v) {
+                        cw->reg_v[v] = cw->mem[cw->I + v];
                     }
-                    chip8.register_program_counter += 2;
+                    cw->PC += 2;
                 break;
 
                 default:
-                    printf("Unknown op code: %x\n", chip8.register_opcode);
+                    printf("UNKNOWN OPCODE: 0x%x\n", cw->opcode);
                 break;
             }
         break;
     }
 
     // Update Timers
-    if (chip8.system_delay_timer > 0)
-    {
-        --chip8.system_delay_timer;
+    if (cw->DT > 0) {
+        --cw->DT;
     }
 
-    if (chip8.system_sound_timer > 0)
-    {
-        --chip8.system_sound_timer;
-        chip8.register_sound_flag = true;
+    if (cw->ST > 0) {
+        --cw->ST;
+        cw->audio_flag = true;
     }
 }
