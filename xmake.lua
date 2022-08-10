@@ -1,6 +1,7 @@
 set_project("chip-walo")
-set_languages("ansi")
+set_languages("clatest", "cxxlatest")
 set_optimize("fastest")
+set_warnings("everything")
 
 add_requires("libsdl")
 
