@@ -11,16 +11,16 @@
 
 int32_t main(int32_t argc, int8_t *argv[]) {
     Chip_walo *chip_walo = NULL;
-    chip_walo = (Chip_walo *) malloc(sizeof(Chip_walo));
 
     // Load Rom
     if (argc == 2) {
+        chip_walo = (Chip_walo *) malloc(sizeof(Chip_walo));
         core_init(chip_walo);
         core_load(chip_walo, argv[1]);
         gfx_init();
         audio_init();
     } else {
-        printf("Usage: xmake run chip-walo \"PATH/OF/THE/ROM\"");
+        printf("Usage: xmake run chip-walo \"PATH/OF/THE/ROM\"\n");
         quit = true;
     }
 
@@ -44,6 +44,7 @@ int32_t main(int32_t argc, int8_t *argv[]) {
             gfx_term();
             audio_term();
             free(chip_walo);
+            chip_walo = NULL;
             break;
         }
     }

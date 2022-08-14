@@ -4,7 +4,6 @@
 #include "system.h"
 #include "graphics.h"
 
-
 /*
     Color channel format: A-R-G-B
     example: FF-3F-F5-B5
