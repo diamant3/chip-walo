@@ -14,7 +14,7 @@ int32_t main(int32_t argc, int8_t *argv[]) {
 
     // Load Rom
     if (argc == 2) {
-        chip_walo = (Chip_walo *) malloc(sizeof(Chip_walo));
+        chip_walo = (Chip_walo *) malloc(sizeof(*chip_walo));
         core_init(chip_walo);
         core_load(chip_walo, argv[1]);
         gfx_init();
@@ -26,7 +26,7 @@ int32_t main(int32_t argc, int8_t *argv[]) {
 
     // cpu operation loop
     while (!quit) {
-        SDL_Delay(2);
+        SDL_Delay(3);
         core_cycle(chip_walo);
         key_detect(chip_walo);
 
