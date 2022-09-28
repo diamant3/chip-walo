@@ -35,7 +35,7 @@ typedef struct Chip_walo_t {
     uint16_t SP;
 } Chip_walo;
 
-extern uint8_t quit;
+uint8_t quit;
 
 // system/cpu functions
 void core_load(Chip_walo *cw, const uint8_t *rom);

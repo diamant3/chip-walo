@@ -4,8 +4,6 @@
 #include "system.h"
 #include "keypad.h"
 
-uint8_t quit = false;
-
 // 16 keys corresponding to the keypad of chip-8
 uint8_t key_map[KEYPAD_LENGTH] = {
     SDLK_x, SDLK_1, SDLK_2, SDLK_3,
@@ -27,7 +25,7 @@ void key_detect(Chip_walo *cw) {
                 quit = true;
             }
 
-            for (uint32_t key = 0; key < KEYPAD_LENGTH; ++key) {
+            for (size_t key = 0; key < KEYPAD_LENGTH; ++key) {
                 if (event.key.keysym.sym == key_map[key]) {
                     cw->keypad[key] = true;
                 }
@@ -35,7 +33,7 @@ void key_detect(Chip_walo *cw) {
         }
 
         if (event.type == SDL_KEYUP) {
-            for (uint32_t key = 0; key < KEYPAD_LENGTH; ++key) {
+            for (size_t key = 0; key < KEYPAD_LENGTH; ++key) {
                 if (event.key.keysym.sym == key_map[key]) {
                     cw->keypad[key] = false;
                 }

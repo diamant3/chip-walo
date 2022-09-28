@@ -17,7 +17,10 @@ SDL_Renderer *renderer = NULL;
 SDL_Texture *texture = NULL;
 
 void gfx_init(void) {
-    if (SDL_InitSubSystem(SDL_INIT_EVERYTHING) < 0) {
+    if (SDL_InitSubSystem(
+        SDL_INIT_VIDEO | 
+        SDL_INIT_AUDIO | 
+        SDL_INIT_AUDIO) < 0) {
         printf("SDL initialization failed, Error: %s\n", SDL_GetError());
         return;
     }
@@ -28,15 +31,19 @@ void gfx_init(void) {
         SDL_WINDOWPOS_CENTERED,
         (SCREEN_WIDTH * SCREEN_SCALE),
         (SCREEN_HEIGHT * SCREEN_SCALE),
-        0);
+        SDL_WINDOW_SHOWN);
 
     if (window == NULL) {
         printf("Creating a window object failed, Error: %s\n", SDL_GetError());
         return;
     }
 
-    renderer = SDL_CreateRenderer(window, -1, 0);
-    SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE);
+    renderer = SDL_CreateRenderer(
+        window, 
+        -1, 
+        SDL_RENDERER_ACCELERATED
+    );
+    //SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE);
 
     if (renderer == NULL) {
         printf("Creating a rendering context failed, Error: %s\n", SDL_GetError());
@@ -48,7 +55,8 @@ void gfx_init(void) {
         SDL_PIXELFORMAT_ARGB8888,
         SDL_TEXTUREACCESS_STREAMING,
         SCREEN_WIDTH,
-        SCREEN_HEIGHT);
+        SCREEN_HEIGHT
+    );
 
     if (texture == NULL) {
         printf("Creating a texture failed, Error: %s\n", SDL_GetError());
@@ -57,9 +65,9 @@ void gfx_init(void) {
 }
 
 void gfx_update(Chip_walo *cw) {
-    static uint32_t px_buffer[SCREEN_SIZE];
+    uint32_t px_buffer[SCREEN_SIZE];
 
-    for (uint32_t px = 0; px < SCREEN_SIZE; ++px) {
+    for (size_t px = 0; px < SCREEN_SIZE; ++px) {
         px_buffer[px] = ((FG_COLOR * cw->gfx[px]) | BG_COLOR);
     }
     SDL_UpdateTexture(texture, NULL, px_buffer, SCREEN_WIDTH * (sizeof(px_buffer[0])));

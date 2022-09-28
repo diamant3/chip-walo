@@ -84,7 +84,7 @@ void core_load(Chip_walo *cw, const uint8_t *rom) {
 
 void core_cycle(Chip_walo *cw) {
     cw->opcode = (cw->mem[cw->PC] << 8) | cw->mem[cw->PC + 1];
-
+    
     switch (cw->opcode & 0xF000) {
         case 0x0000:
             switch (BYTE) {
@@ -278,20 +278,18 @@ void core_cycle(Chip_walo *cw) {
 
         // Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision
         case 0xD000: {
-                uint32_t x = cw->reg_v[X];
-                uint32_t y = cw->reg_v[Y];
-                uint32_t height = NIBBLE;
+                uint8_t x = cw->reg_v[X];
+                uint8_t y = cw->reg_v[Y];
+                uint8_t height = NIBBLE;
                 uint32_t px = 0;
                 cw->reg_v[0xF] = false;
 
-                for (uint32_t yline = 0; yline < height; ++yline) {
+                for (size_t yline = 0; yline < height; ++yline) {
                     px = cw->mem[cw->I + yline];
-                    for (uint32_t xline = 0; xline < 8; ++xline) {
+                    for (size_t xline = 0; xline < 8; ++xline) {
                         if ((px & (0x80 >> xline)) != 0) {
                             if (cw->gfx[x + xline + ((y + yline) * SCREEN_WIDTH) % (SCREEN_WIDTH * SCREEN_HEIGHT)] == true) {
                                 cw->reg_v[0xF] = true; // Collision
-                            } else {
-                                cw->reg_v[0xF] = false;
                             }
                             cw->gfx[((x + xline) + ((y + yline) * SCREEN_WIDTH))] ^= 1;
                         }
