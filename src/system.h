@@ -2,11 +2,11 @@
 #define _SYSTEM_H
 
 // opcode shorthands
-#define ADDR(cw -> opcode & 0x0FFF) /* A 12-bit value, the lowest 12 bits of the instruction */
-#define BYTE(cw -> opcode & 0x00FF) /* An 8-bit value, the lowest 8 bits of the instruction */
-#define NIBBLE(cw -> opcode & 0x000F) /* A 4-bit value, the lowest 4 bits of the instruction */
-#define X((cw -> opcode & 0x0F00) >> 8) /* A 4-bit value, the lower 4 bits of the high byte of the instruction */
-#define Y((cw -> opcode & 0x00F0) >> 4) /* A 4-bit value, the upper 4 bits of the low byte of the instruction */
+#define ADDR (cw -> opcode & 0x0FFF) /* A 12-bit value, the lowest 12 bits of the instruction */
+#define BYTE (cw -> opcode & 0x00FF) /* An 8-bit value, the lowest 8 bits of the instruction */
+#define NIBBLE (cw -> opcode & 0x000F) /* A 4-bit value, the lowest 4 bits of the instruction */
+#define X ((cw -> opcode & 0x0F00) >> 8) /* A 4-bit value, the lower 4 bits of the high byte of the instruction */
+#define Y ((cw -> opcode & 0x00F0) >> 4) /* A 4-bit value, the upper 4 bits of the low byte of the instruction */
 
 // system constants
 #define SCREEN_WIDTH 64 /* width of the display */
