@@ -4,5 +4,5 @@
 #define KEYPAD_LENGTH 16
 
 // key detect function
-void key_detect(Chip_walo *cw);
+void key_detect(Chip_walo * cw);
 #endif
