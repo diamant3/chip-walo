@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "../include/system.h"
+#include "system.h"
 
 const unsigned char FONTSET[FONT_LENGTH] = {
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -40,7 +40,7 @@ void core_init(Chip_walo *cw) {
     cw->pc = START_MEM_ADDRESS;
 }
 
-int core_load(Chip_walo *cw, const char *rom) {
+void core_load(Chip_walo *cw, const char *rom) {
     long rom_size = 0;
     unsigned char *rom_buffer = NULL;
     FILE *file = NULL;
@@ -273,7 +273,7 @@ void core_cycle(Chip_walo *cw) {
                 px = cw->mem[cw->i + yline];
                 for (size_t xline = 0; xline < 8; ++xline) {
                     int px_data = (px & (0x80 >> xline));
-                    unsigned char px_offset = cw->gfx[x + xline + ((y + yline) * SCREEN_WIDTH) % (SCREEN_WIDTH * SCREEN_HEIGHT)]
+                    unsigned char px_offset = cw->gfx[x + xline + ((y + yline) * SCREEN_WIDTH) % (SCREEN_WIDTH * SCREEN_HEIGHT)];
                     if (px_data != 0) {
                         if (px_offset == 1) {
                             cw->reg_v[0xF] = 1; // collision
