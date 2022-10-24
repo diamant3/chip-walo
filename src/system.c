@@ -5,7 +5,7 @@
 
 #include "system.h"
 
-const unsigned char FONTSET[FONT_LENGTH] = {
+const u8 FONTSET[FONT_LENGTH] = {
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     0x20, 0x60, 0x20, 0x20, 0x70, // 1
     0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -25,15 +25,12 @@ const unsigned char FONTSET[FONT_LENGTH] = {
 };
 
 void core_init(Chip_walo *cw) {
-    srand((unsigned int)time(NULL));
+    srand((u32)time(NULL));
     cw->i = 0;
     cw->opcode = 0;
     cw->sp = 0;
     memset(cw->mem, 0, MEMORY_SIZE);
     memset(cw->gfx, 0, SCREEN_SIZE);
-    memset(cw->stack, 0, STACK_SIZE);
-    memset(cw->key, 0, 16);
-    memset(cw->reg_v, 0, REGISTER_COUNT);
     for (int idx = 0; idx < FONT_LENGTH; idx++) {
         cw->mem[START_FONT_ADDRESS] = FONTSET[idx];
     }
@@ -41,16 +38,17 @@ void core_init(Chip_walo *cw) {
 }
 
 void core_load(Chip_walo *cw, const char *rom) {
-    long rom_size = 0;
-    unsigned char *rom_buffer = NULL;
+    u64 rom_size = 0;
+    u8 *rom_buffer = NULL;
     FILE *file = NULL;
-    if (fopen_s(&file, rom, "b") > 0) {
+    file = fopen(rom, "rb");
+    if (file != NULL) {
         fseek(file, 0, SEEK_END);
         rom_size = ftell(file);
         fseek(file, 0, SEEK_SET);
-        rom_buffer = (unsigned char *)malloc(rom_size * (sizeof(rom_buffer[0])));
+        rom_buffer = (u8 *)malloc(rom_size * (sizeof(rom_buffer[0])));
     } else {
-        return 1;
+        return;
     }
 
     // Check and Load the rom to memory
@@ -61,16 +59,15 @@ void core_load(Chip_walo *cw, const char *rom) {
             }
         } else {
             printf("Error: File size exceeded.\n");
-            return 1;
+            return;
         }
     } else {
         printf("Error: Failed to read the file.\n");
-        return 1;
+        return;
     }
 
     free(rom_buffer);
     fclose(file);
-    return 0;
 }
 void core_cycle(Chip_walo *cw) {
     cw->opcode = (cw->mem[cw->pc] << 8) | cw->mem[cw->pc + 1];
@@ -81,13 +78,14 @@ void core_cycle(Chip_walo *cw) {
                 // Clear the display 
                 case 0xE0:
                     memset(cw->gfx, 0, SCREEN_SIZE);
-                    cw->draw_flag = 1;
+                    cw->draw_flag = SET_DRAW;
                     cw->pc += 2;
                 break;
                 
                 // Return from a subroutine 
                 case 0xEE:
-                    cw->pc = cw->stack[--cw->sp];
+                    --cw->sp;
+                    cw->pc = cw->stack[cw->sp];
                     cw->pc += 2;
                 break;
      
@@ -105,7 +103,7 @@ void core_cycle(Chip_walo *cw) {
         // Call a subroutine at ADDR
         case 0x2000:
             cw->stack[cw->sp] = cw->pc;
-            cw->sp++;
+            ++cw->sp;
             cw->pc = ADDR;
         break;
 
@@ -176,7 +174,7 @@ void core_cycle(Chip_walo *cw) {
 
                 // Set register Vx = Vx + Vy, Set register Vf = 1(Carry)
                 case 0x4 : {
-                    unsigned short result = cw->reg_v[X] + cw->reg_v[Y];
+                    u16 result = cw->reg_v[X] + cw->reg_v[Y];
                     if (result > 0xFF) {
                         cw->reg_v[0xF] = 1;
                     } else {
@@ -189,7 +187,7 @@ void core_cycle(Chip_walo *cw) {
 
                 // Set register Vx = Vx - Vy, Set register Vf = NOT borrow
                 case 0x5 : {
-                    unsigned char result = cw->reg_v[X] - cw->reg_v[Y];
+                    u8 result = cw->reg_v[X] - cw->reg_v[Y];
                     if (cw->reg_v[X] > cw->reg_v[Y]) {
                         cw->reg_v[0xF] = 1;
                     } else {
@@ -209,7 +207,7 @@ void core_cycle(Chip_walo *cw) {
 
                 // Set register Vx = Vy - Vx, Set register Vf = NOT borrow
                 case 0x7 : {
-                    unsigned char result = cw->reg_v[Y] - cw->reg_v[X];
+                    u8 result = cw->reg_v[Y] - cw->reg_v[X];
                     if (cw->reg_v[Y] > cw->reg_v[X]) {
                         cw->reg_v[0xF] = 1;
                     } else {
@@ -254,28 +252,26 @@ void core_cycle(Chip_walo *cw) {
         break;
 
         // Set register Vx = random byte AND byte
-        case 0xC000 : {
-            unsigned char random = (rand() % 256);
+        case 0xC000: {
+            u8 random = (rand() % 0xFF);
             cw->reg_v[X] = (random & BYTE);
             cw->pc += 2;
         }
         break;
         
         // Display n - byte sprite starting at memory location I at(Vx, Vy), set VF = collision
-        case 0xD000 : {
-            unsigned char x = cw->reg_v[X];
-            unsigned char y = cw->reg_v[Y];
-            unsigned char height = NIBBLE;
-            unsigned int px = 0;
+        case 0xD000: {
+            u8 x = cw->reg_v[X];
+            u8 y = cw->reg_v[Y];
+            u8 height = NIBBLE;
+            u32 px = 0;
             cw->reg_v[0xF] = 0;
 
             for (size_t yline = 0; yline < height; ++yline) {
                 px = cw->mem[cw->i + yline];
                 for (size_t xline = 0; xline < 8; ++xline) {
-                    int px_data = (px & (0x80 >> xline));
-                    unsigned char px_offset = cw->gfx[x + xline + ((y + yline) * SCREEN_WIDTH) % (SCREEN_WIDTH * SCREEN_HEIGHT)];
-                    if (px_data != 0) {
-                        if (px_offset == 1) {
+                    if ((px & (0x80 >> xline))) {
+                        if (cw->gfx[x + xline + ((y + yline) * SCREEN_WIDTH) % (SCREEN_WIDTH * SCREEN_HEIGHT)] == 1) {
                             cw->reg_v[0xF] = 1; // collision
                         }
                         cw->gfx[((x + xline) + ((y + yline) * SCREEN_WIDTH))] ^= 1;
@@ -283,7 +279,7 @@ void core_cycle(Chip_walo *cw) {
                 }
             }
             
-            cw->draw_flag = 1;
+            cw->draw_flag = SET_DRAW;
             cw->pc += 2;
         } 
         break;
@@ -324,7 +320,7 @@ void core_cycle(Chip_walo *cw) {
                 
                 // Wait for a key press, store the value of the key in register Vx 
                 case 0x0A:
-                    for (unsigned char key = 0; key < 16; ++key) {
+                    for (u8 key = 0; key < 16; ++key) {
                         if (cw->key[key] == 1) {
                             cw->reg_v[X] = key;
                             cw->pc += 2;
@@ -367,7 +363,7 @@ void core_cycle(Chip_walo *cw) {
 
                 // Store registers V0 through Vx in memory starting at location I
                 case 0x55:
-                    for (unsigned int v = 0; v <= X; ++v) {
+                    for (u32 v = 0; v <= X; ++v) {
                         cw->mem[cw->i + v] = cw->reg_v[v];
                     }
                     cw->pc += 2;
@@ -375,7 +371,7 @@ void core_cycle(Chip_walo *cw) {
 
                 // Read registers V0 through Vx from memory starting at location I
                 case 0x65:
-                    for (unsigned int v = 0; v <= X; ++v) {
+                    for (u32 v = 0; v <= X; ++v) {
                         cw->reg_v[v] = cw->mem[cw->i + v];
                     }
                     cw->pc += 2;
@@ -389,9 +385,9 @@ void core_cycle(Chip_walo *cw) {
     }
 
     // Update Timers
-    if (cw->dt > 0) { cw->dt--; }
+    if (cw->dt > 0) { --cw->dt; }
     if (cw->st > 0) {
-        cw->st--;
-        cw->audio_flag = 1;
+        --cw->st;
+        cw->audio_flag = SET_AUDIO;
     }
 }
