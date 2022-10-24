@@ -12,7 +12,7 @@ SDL_AudioDeviceID audioDevice;
 u32 sampleNR = 0;
 
 // source: https://stackoverflow.com/a/45002609
-static void audio_callback(void *user_data, u16 *raw_buffer, u32 bytes) {
+static void audio_callback(void *user_data, u32 *raw_buffer, u32 bytes) {
     u32 *buffer = raw_buffer;
     u32 length = (u32)(bytes / 2);
     sampleNR = *(u32 *)user_data;

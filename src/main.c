@@ -29,14 +29,14 @@ int main(int argc, char *argv[]) {
 
         if (chip_walo->draw_flag == SET_DRAW) {
             gfx_update(chip_walo);
-            chip_walo->draw_flag = !SET_DRAW;
+            chip_walo->draw_flag = 0;
         }
 
         if (chip_walo->audio_flag == SET_AUDIO) {
             audio_beep();
-            chip_walo->audio_flag = !SET_AUDIO;
+            chip_walo->audio_flag = 0;
         }
-        SDL_Delay(2);
+        SDL_Delay(3);
     }
 
     gfx_term();

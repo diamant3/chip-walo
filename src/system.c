@@ -32,7 +32,7 @@ void core_init(Chip_walo *cw) {
     memset(cw->mem, 0, MEMORY_SIZE);
     memset(cw->gfx, 0, SCREEN_SIZE);
     for (int idx = 0; idx < FONT_LENGTH; idx++) {
-        cw->mem[START_FONT_ADDRESS] = FONTSET[idx];
+        cw->mem[START_FONT_ADDRESS + idx] = FONTSET[idx];
     }
     cw->pc = START_MEM_ADDRESS;
 }

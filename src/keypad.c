@@ -37,18 +37,18 @@ void key_detect(Chip_walo *cw) {
             if (event.key.keysym.sym == SDLK_ESCAPE) {
                 exit(SUCCESS);
             }
-        }
 
-        for (u8 key = 0; key < KEY_COUNT; ++key) {
-            if (event.key.keysym.sym == key_map[key]) {
-                cw -> key[key] = TRUE;
+            for (u8 key = 0; key < KEY_COUNT; ++key) {
+                if (event.key.keysym.sym == key_map[key]) {
+                    cw -> key[key] = 1;
+                }
             }
         }
 
         if (event.type == SDL_KEYUP) {
             for (u8 key = 0; key < KEY_COUNT; ++key) {
                 if (event.key.keysym.sym == key_map[key]) {
-                    cw -> key[key] = FALSE;
+                    cw -> key[key] = 0;
                 }
             }
         }
