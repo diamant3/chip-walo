@@ -2,7 +2,7 @@
 #define _GRAPHICS_H
 
 // graphic constants
-#define SCREEN_SCALE 10 /* scaling factor for emulated pixel size */
+#define SCREEN_SCALE 8 /* scaling factor for emulated pixel size */
 
 // graphics functions
 void gfx_init(void);

@@ -38,9 +38,7 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
 # Samples
 
-![chip-walo](images/chip-walo.gif)
-
-![Space Invaders](images/Space_Invaders.png)
+![chip-walo](images/sample.png)
 
 # Building
 
@@ -53,13 +51,13 @@ Required:
 
 Download the repo:
 
-```
+```bash
 git clone https://github.com/diamant3/chip-walo.git
 ```
 
 build chip-walo:
 
-```
+```bash
 cd chip-walo && xmake
 ```
 
@@ -72,25 +70,21 @@ Required:
 
 SDL2 Installation using xmake package manager(xrepo):
 
-```
+```cmd
 xrepo install libsdl
 ```
 
 Download the repo:
 
-```
+```cmd
 git clone https://github.com/diamant3/chip-walo.git
 ```
 
 build chip-walo:
 
-```
+```cmd
 cd chip-walo && xmake
 ```
-
- > [SDL2 Runtime Binaries](https://www.libsdl.org/download-2.0.php) is **REQUIRED**.
-
- > Put it inside the ``` build\windows\x64\release ``` folder.
 
 # Usage
 
