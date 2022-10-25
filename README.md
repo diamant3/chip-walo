@@ -4,23 +4,6 @@ CHIP-8 Emulator using C and SDL2.
 
 ![C](https://img.shields.io/badge/Language-c-gold?style=for-the-badge)
 
-## Table of Contents
-
-- [chip-walo](#chip-walo)
-  - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-  - [Features](#features)
-- [Samples](#samples)
-- [Building](#building)
-  - [Linux](#linux)
-  - [Windows](#windows)
-- [Usage](#usage)
-  - [Run](#run)
-  - [Input](#input)
-- [Credits](#credits)
-  - [Issue](#issue)
-  - [Contribution](#contribution)
-
 ## Introduction
 
 CHIP-8 is an interpreted programming language which was initially used in the late 1970s.
@@ -36,13 +19,13 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 - Working sound
 - Cross-platform
 
-# Samples
+## Samples
 
 ![chip-walo](images/sample.png)
 
-# Building
+## Building
 
-## Linux
+### Linux
 
 Required:
 - gcc
@@ -61,7 +44,7 @@ build chip-walo:
 cd chip-walo && xmake
 ```
 
-## Windows
+### Windows
 
 Required:
 
@@ -86,15 +69,15 @@ build chip-walo:
 cd chip-walo && xmake
 ```
 
-# Usage
+## Usage
 
-## Run
+### Run
 
 ```
 xmake run chip-walo PATH/OF/THE/ROM
 ```
 
-## Input
+### Input
 
 **CHIP-8 Keypad**
 
@@ -108,7 +91,7 @@ xmake run chip-walo PATH/OF/THE/ROM
 
 > This is the key mappings of the chip-walo.
 
-# Credits
+## Credits
 
 - [SDL2](https://www.libsdl.org/)
 - [xmake](https://xmake.io/#/)
