@@ -102,8 +102,7 @@ void core_cycle(Chip_walo *cw) {
                 // Return from a subroutine 
                 case 0xEE:
                     mdelay(105);
-                    --cw->sp;
-                    cw->pc = cw->stack[cw->sp];
+                    cw->pc = cw->stack[--cw->sp];
                     cw->pc += 2;
                 break;
      
@@ -117,7 +116,6 @@ void core_cycle(Chip_walo *cw) {
         case 0x1000:
             mdelay(105);
             cw->pc = ADDR;
-            mdelay(5);
         break;
 
         // Call a subroutine at ADDR
@@ -126,7 +124,6 @@ void core_cycle(Chip_walo *cw) {
             cw->stack[cw->sp] = cw->pc;
             ++cw->sp;
             cw->pc = ADDR;
-            mdelay(5);
         break;
 
         // Skip next instruction if register Vx == byte 
@@ -137,7 +134,6 @@ void core_cycle(Chip_walo *cw) {
             } else {
                 cw->pc += 2;
             }
-            mdelay(9);
         break;
 
         // Skip next instruction if register Vx != byte 
@@ -148,7 +144,6 @@ void core_cycle(Chip_walo *cw) {
             } else {
                 cw->pc += 2;
             }
-            mdelay(9);
         break;
 
         // Skip next instruction if register Vx == register Vy 
@@ -159,7 +154,6 @@ void core_cycle(Chip_walo *cw) {
             } else {
                 cw->pc += 2;
             }
-            mdelay(9);
         break;
 
         // Set register Vx = byte 
@@ -224,10 +218,10 @@ void core_cycle(Chip_walo *cw) {
                 case 0x5 : {
                     mdelay(200);
                     u8 result = cw->reg_v[X] - cw->reg_v[Y];
-                    if (cw->reg_v[X] > cw->reg_v[Y]) {
-                        cw->reg_v[0xF] = 1;
-                    } else {
+                    if (cw->reg_v[Y] > cw->reg_v[X]) {
                         cw->reg_v[0xF] = 0;
+                    } else {
+                        cw->reg_v[0xF] = 1;
                     }
                     cw->reg_v[X] = result;
                     cw->pc += 2;
@@ -246,10 +240,10 @@ void core_cycle(Chip_walo *cw) {
                 case 0x7 : {
                     mdelay(200);
                     u8 result = cw->reg_v[Y] - cw->reg_v[X];
-                    if (cw->reg_v[Y] > cw->reg_v[X]) {
-                        cw->reg_v[0xF] = 1;
-                    } else {
+                    if (cw->reg_v[X] > cw->reg_v[Y]) {
                         cw->reg_v[0xF] = 0;
+                    } else {
+                        cw->reg_v[0xF] = 1;
                     }
                     cw->reg_v[X] = result;
                     cw->pc += 2;
@@ -278,7 +272,6 @@ void core_cycle(Chip_walo *cw) {
             } else {
                 cw->pc += 2;
             }
-            mdelay(9);
         break;
 
         // Set I = NNN
@@ -292,7 +285,6 @@ void core_cycle(Chip_walo *cw) {
         case 0xB000:
             mdelay(105);
             cw->pc = (ADDR + cw->reg_v[0]);
-            mdelay(5);
         break;
 
         // Set register Vx = random byte AND byte
@@ -307,17 +299,17 @@ void core_cycle(Chip_walo *cw) {
         // Display n - byte sprite starting at memory location I at(Vx, Vy), set VF = collision
         case 0xD000: {
             mdelay(22734);
-            u8 x = cw->reg_v[X];
-            u8 y = cw->reg_v[Y];
+            u8 x = cw->reg_v[X] % SCREEN_WIDTH;
+            u8 y = cw->reg_v[Y] % SCREEN_HEIGHT;
             u8 height = NIBBLE;
-            u32 px = 0;
+            u8 px = 0;
             cw->reg_v[0xF] = 0;
 
             for (u8 yline = 0; yline < height; ++yline) {
                 px = cw->mem[cw->i + yline];
                 for (u8 xline = 0; xline < 8; ++xline) {
                     if ((px & (0x80 >> xline))) {
-                        if (cw->gfx[x + xline + ((y + yline) * SCREEN_WIDTH) % (SCREEN_WIDTH * SCREEN_HEIGHT)] == 1) {
+                        if (cw->gfx[x + xline + ((y + yline) * SCREEN_WIDTH)] == 1) {
                             cw->reg_v[0xF] = 1; // collision
                         }
                         cw->gfx[((x + xline) + ((y + yline) * SCREEN_WIDTH))] ^= 1;
@@ -327,7 +319,6 @@ void core_cycle(Chip_walo *cw) {
             
             cw->draw_flag = SET_DRAW;
             cw->pc += 2;
-            mdelay(4634);
         } 
         break;
 
@@ -341,7 +332,6 @@ void core_cycle(Chip_walo *cw) {
                     } else {
                         cw->pc += 2;
                     }
-                    mdelay(9);
                 break;
 
                 // Skip next instruction if key with the value of Vx is not pressed 
@@ -352,7 +342,6 @@ void core_cycle(Chip_walo *cw) {
                     } else {
                         cw->pc += 2;
                     }
-                    mdelay(9);
                 break;
 
                 default:
@@ -400,7 +389,6 @@ void core_cycle(Chip_walo *cw) {
                     mdelay(86);
                     cw->i += cw->reg_v[X];
                     cw->pc += 2;
-                    mdelay(14);
                 break;
 
                 // Set I = location of sprite for digit register Vx
@@ -417,7 +405,6 @@ void core_cycle(Chip_walo *cw) {
                     cw->mem[cw->i + 1] = (cw->reg_v[X] / 10) % 10;
                     cw->mem[cw->i + 2] = (cw->reg_v[X] % 100) % 10;
                     cw->pc += 2;
-                    mdelay(545);
                 break;
 
                 // Store registers V0 through Vx in memory starting at location I
@@ -427,7 +414,6 @@ void core_cycle(Chip_walo *cw) {
                         cw->mem[cw->i + v] = cw->reg_v[v];
                     }
                     cw->pc += 2;
-                    mdelay(477);
                 break;
 
                 // Read registers V0 through Vx from memory starting at location I
@@ -437,7 +423,6 @@ void core_cycle(Chip_walo *cw) {
                         cw->reg_v[v] = cw->mem[cw->i + v];
                     }
                     cw->pc += 2;
-                    mdelay(477);
                 break;
 
                 default:
