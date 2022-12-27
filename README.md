@@ -48,13 +48,14 @@ cd chip-walo && xmake
 
 Required:
 
-- [xmake](https://xmake.io/#/guide/installation)
+- [scoop](https://scoop.sh/)
 - visual studio(MSVC)
 
-SDL2 Installation using xmake package manager(xrepo):
+SDL2 Installation using scoop:
 
 ```cmd
-xrepo install libsdl
+scoop bucket add extras
+scoop install sdl2
 ```
 
 Download the repo:
