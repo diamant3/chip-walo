@@ -21,6 +21,3 @@
 # build files of xmake
 .xmake/
 build/
-
-# vscode files
-.vscode

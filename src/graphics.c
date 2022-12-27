@@ -13,14 +13,16 @@
 #define FG_COLOR 0xFF1976D2
 #define BG_COLOR 0xFF212121
 
-SDL_Window * window = NULL;
-SDL_Renderer * renderer = NULL;
-SDL_Texture * texture = NULL;
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+SDL_Texture *texture = NULL;
 
-void gfx_init(void) {
-    if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-        printf("[ERROR]: %s \n", SDL_GetError());
-        exit(FAILURE);
+void gfx_init(void) 
+{
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) 
+    {
+        printf("[FAIL] %s \n", SDL_GetError());
+        exit(0);
     }
 
     window = SDL_CreateWindow(
@@ -32,9 +34,10 @@ void gfx_init(void) {
         SDL_WINDOW_SHOWN
     );
 
-    if (window == NULL) {
-        printf("[ERROR]: %s \n", SDL_GetError());
-        exit(FAILURE);
+    if (window == NULL) 
+    {
+        printf("[FAIL] %s \n", SDL_GetError());
+        exit(0);
     }
 
     renderer = SDL_CreateRenderer(
@@ -43,9 +46,10 @@ void gfx_init(void) {
         SDL_RENDERER_ACCELERATED
     );
 
-    if (renderer == NULL) {
-        printf("[ERROR]: %s\n", SDL_GetError());
-        exit(FAILURE);
+    if (renderer == NULL) 
+    {
+        printf("[FAIL] %s\n", SDL_GetError());
+        exit(0);
     }
 
     texture = SDL_CreateTexture(
@@ -56,18 +60,19 @@ void gfx_init(void) {
         SCREEN_HEIGHT
     );
 
-    if (texture == NULL) {
-        printf("[ERROR]: %s\n", SDL_GetError());
-        exit(FAILURE);
+    if (texture == NULL) 
+    {
+        printf("[FAIL] %s\n", SDL_GetError());
+        exit(0);
     }
 }
 
-void gfx_update(Chip_walo *cw) {
-    u32 px_buffer[SCREEN_SIZE] = {0};
+void gfx_update(Chip_walo *cw) 
+{
+    u32 px_buffer[SCREEN_SIZE] = { 0 };
 
-    for (u32 px = 0; px < SCREEN_SIZE; ++px) {
+    for (u32 px = 0; px < SCREEN_SIZE; ++px)
         px_buffer[px] = ((FG_COLOR * cw->gfx[px]) | BG_COLOR);
-    }
 
     SDL_UpdateTexture(texture, NULL, px_buffer, SCREEN_WIDTH * (sizeof(px_buffer[0])));
     SDL_RenderClear(renderer);
@@ -75,7 +80,8 @@ void gfx_update(Chip_walo *cw) {
     SDL_RenderPresent(renderer);
 }
 
-void gfx_term(void) {
+void gfx_term(void) 
+{
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

@@ -58,15 +58,6 @@ typedef struct Chip_walo_t {
 } Chip_walo;
 Chip_walo *chip_walo;
 
-enum common_flags {
-    SUCCESS = 0,
-    FAILURE = 1,
-    TRUE = 2,
-    FALSE = 3,
-    SET_DRAW = 4,
-    SET_AUDIO = 5
-};
-
 void core_load(Chip_walo *cw, const char *rom);
 void core_cycle(Chip_walo *cw);
 void core_init(Chip_walo *cw);

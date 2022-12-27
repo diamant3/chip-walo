@@ -5,7 +5,8 @@
 
 #include "system.h"
 
-const u8 FONTSET[FONT_LENGTH] = {
+const u8 FONTSET[FONT_LENGTH] = 
+{
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     0x20, 0x60, 0x20, 0x20, 0x70, // 1
     0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -24,15 +25,20 @@ const u8 FONTSET[FONT_LENGTH] = {
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
-/* microsecond to millisecond */
-static void mdelay(int sec) {
+// milisecond delay
+static void mdelay(int sec) 
+{
     int millis = sec / 1000;
     clock_t start = clock();
     while(clock() <= (start + millis));
 }
 
-void core_init(Chip_walo *cw) {
+void core_init(Chip_walo *cw) 
+{
+    /* Generate a random seed */
     srand((u32)time(NULL));
+
+    /* Set all to zero */
     cw->i = 0;
     cw->opcode = 0;
     cw->sp = 0;
@@ -40,45 +46,62 @@ void core_init(Chip_walo *cw) {
     memset(cw->gfx, 0, SCREEN_SIZE);
     memset(cw->stack, 0, STACK_SIZE);
     memset(cw->reg_v, 0, REGISTER_COUNT);
-    for (int idx = 0; idx < FONT_LENGTH; idx++) {
+
+    /* Load font to memory */
+    for (int idx = 0; idx < FONT_LENGTH; idx++)
         cw->mem[START_FONT_ADDRESS + idx] = FONTSET[idx];
-    }
+
+    /* Jump to chip-8 program's address space*/
     cw->pc = START_MEM_ADDRESS;
+    printf("[SUCCESS] chip-walo Initialized.\n");
 }
 
-void core_load(Chip_walo *cw, const char *rom) {
+void core_load(Chip_walo *cw, const char *rom) 
+{
     u64 rom_size = 0;
     u8 *rom_buffer = NULL;
     FILE *file = NULL;
+
     file = fopen(rom, "rb");
-    if (file != NULL) {
+    if (file != NULL) 
+    {
         fseek(file, 0, SEEK_END);
         rom_size = ftell(file);
         fseek(file, 0, SEEK_SET);
         rom_buffer = (u8 *)malloc(rom_size * (sizeof(rom_buffer[0])));
-    } else {
-        return;
+    } 
+    else 
+    {
+        printf("[FAIL] Can't open the file.\n");
+        exit(0);
     }
 
-    // Check and Load the rom to memory
-    if (fread(rom_buffer, 1, rom_size, file) > 0) {
-        if (rom_size <= (MEMORY_SIZE - START_MEM_ADDRESS)) {
-            for (int idx = 0; idx < rom_size; idx++) {
+    /* Check and Load the rom to memory */
+    if (fread(rom_buffer, 1, rom_size, file) > 0) 
+    {
+        if (rom_size <= (MEMORY_SIZE - START_MEM_ADDRESS)) 
+        {
+            for (int idx = 0; idx < rom_size; idx++)
                 cw->mem[START_MEM_ADDRESS + idx] = rom_buffer[idx];
-            }
-        } else {
-            printf("Error: File size exceeded.\n");
-            return;
+        } 
+        else 
+        {
+            printf("[FAIL] File size exceeded.\n");
+            exit(0);
         }
-    } else {
-        printf("Error: Failed to read the file.\n");
-        return;
+    } 
+    else 
+    {
+        printf("[FAIL] Empty file.\n");
+        exit(0);
     }
 
     free(rom_buffer);
     fclose(file);
+    printf("[SUCCESS] ROM loaded.\n");
 }
-void core_cycle(Chip_walo *cw) {
+void core_cycle(Chip_walo *cw) 
+{
     cw->opcode = (cw->mem[cw->pc] << 8) | cw->mem[cw->pc + 1];
 
     printf(
@@ -88,14 +111,16 @@ void core_cycle(Chip_walo *cw) {
         chip_walo->mem[chip_walo->pc]
     );
 
-    switch (cw->opcode & 0xF000) {
+    switch (cw->opcode & 0xF000) 
+    {
         case 0x0000:
-            switch (BYTE) {
+            switch (BYTE) 
+            {
                 // Clear the display 
                 case 0xE0:
                     mdelay(109);
                     memset(cw->gfx, 0, SCREEN_SIZE);
-                    cw->draw_flag = SET_DRAW;
+                    cw->draw_flag = 1;
                     cw->pc += 2;
                 break;
                 
@@ -129,31 +154,28 @@ void core_cycle(Chip_walo *cw) {
         // Skip next instruction if register Vx == byte 
         case 0x3000:
             mdelay(55);
-            if (cw->reg_v[X] == BYTE) {
+            if (cw->reg_v[X] == BYTE) 
                 cw->pc += 4;
-            } else {
+            else
                 cw->pc += 2;
-            }
         break;
 
         // Skip next instruction if register Vx != byte 
         case 0x4000:
             mdelay(55);
-            if (cw->reg_v[X] != BYTE) {
+            if (cw->reg_v[X] != BYTE) 
                 cw->pc += 4;
-            } else {
+            else 
                 cw->pc += 2;
-            }
         break;
 
         // Skip next instruction if register Vx == register Vy 
         case 0x5000:
             mdelay(73);
-            if (cw->reg_v[X] == cw->reg_v[Y]) {
+            if (cw->reg_v[X] == cw->reg_v[Y]) 
                 cw->pc += 4;
-            } else {
+            else
                 cw->pc += 2;
-            }
         break;
 
         // Set register Vx = byte 
@@ -171,7 +193,8 @@ void core_cycle(Chip_walo *cw) {
         break;
 
         case 0x8000:
-            switch (NIBBLE) {
+            switch (NIBBLE) 
+            {
                 // Set register Vx = Vy
                 case 0x0:
                     mdelay(200);
@@ -201,28 +224,30 @@ void core_cycle(Chip_walo *cw) {
                 break;
 
                 // Set register Vx = Vx + Vy, Set register Vf = 1(Carry)
-                case 0x4 : {
+                case 0x4 : 
+                {
                     mdelay(200);
                     u16 result = cw->reg_v[X] + cw->reg_v[Y];
-                    if (result > 0xFF) {
+                    if (result > 0xFF) 
                         cw->reg_v[0xF] = 1;
-                    } else {
+                    else
                         cw->reg_v[0xF] = 0;
-                    }
+
                     cw->reg_v[X] = (result & 0xFF);
                     cw->pc += 2;
                 } 
                 break;
 
                 // Set register Vx = Vx - Vy, Set register Vf = NOT borrow
-                case 0x5 : {
+                case 0x5 : 
+                {
                     mdelay(200);
                     u8 result = cw->reg_v[X] - cw->reg_v[Y];
-                    if (cw->reg_v[Y] > cw->reg_v[X]) {
+                    if (cw->reg_v[Y] > cw->reg_v[X])
                         cw->reg_v[0xF] = 0;
-                    } else {
+                    else
                         cw->reg_v[0xF] = 1;
-                    }
+
                     cw->reg_v[X] = result;
                     cw->pc += 2;
                 }
@@ -237,14 +262,15 @@ void core_cycle(Chip_walo *cw) {
                 break;
 
                 // Set register Vx = Vy - Vx, Set register Vf = NOT borrow
-                case 0x7 : {
+                case 0x7 : 
+                {
                     mdelay(200);
                     u8 result = cw->reg_v[Y] - cw->reg_v[X];
-                    if (cw->reg_v[X] > cw->reg_v[Y]) {
+                    if (cw->reg_v[X] > cw->reg_v[Y])
                         cw->reg_v[0xF] = 0;
-                    } else {
+                    else
                         cw->reg_v[0xF] = 1;
-                    }
+
                     cw->reg_v[X] = result;
                     cw->pc += 2;
                 } 
@@ -267,11 +293,10 @@ void core_cycle(Chip_walo *cw) {
         // Skip next instruction if register Vx != Vy
         case 0x9000:
             mdelay(73);
-            if (cw->reg_v[X] != cw->reg_v[Y]) {
+            if (cw->reg_v[X] != cw->reg_v[Y])
                 cw->pc += 4;
-            } else {
+            else
                 cw->pc += 2;
-            }
         break;
 
         // Set I = NNN
@@ -288,7 +313,8 @@ void core_cycle(Chip_walo *cw) {
         break;
 
         // Set register Vx = random byte AND byte
-        case 0xC000: {
+        case 0xC000: 
+        {
             mdelay(164);
             u8 random = (rand() % 0x100);
             cw->reg_v[X] = (random & BYTE);
@@ -297,7 +323,8 @@ void core_cycle(Chip_walo *cw) {
         break;
         
         // Display n - byte sprite starting at memory location I at(Vx, Vy), set VF = collision
-        case 0xD000: {
+        case 0xD000: 
+        {
             mdelay(22734);
             u8 x = cw->reg_v[X] % SCREEN_WIDTH;
             u8 y = cw->reg_v[Y] % SCREEN_HEIGHT;
@@ -305,43 +332,45 @@ void core_cycle(Chip_walo *cw) {
             u8 px = 0;
             cw->reg_v[0xF] = 0;
 
-            for (u8 yline = 0; yline < height; ++yline) {
+            for (u8 yline = 0; yline < height; ++yline) 
+            {
                 px = cw->mem[cw->i + yline];
-                for (u8 xline = 0; xline < 8; ++xline) {
-                    if ((px & (0x80 >> xline))) {
-                        if (cw->gfx[x + xline + ((y + yline) * SCREEN_WIDTH)] == 1) {
+                for (u8 xline = 0; xline < 8; ++xline) 
+                {
+                    if ((px & (0x80 >> xline))) 
+                    {
+                        if (cw->gfx[x + xline + ((y + yline) * SCREEN_WIDTH)] == 1) 
                             cw->reg_v[0xF] = 1; // collision
-                        }
+
                         cw->gfx[((x + xline) + ((y + yline) * SCREEN_WIDTH))] ^= 1;
                     }
                 }
             }
             
-            cw->draw_flag = SET_DRAW;
+            cw->draw_flag = 1;
             cw->pc += 2;
         } 
         break;
 
         case 0xE000:
-            switch (BYTE) {
+            switch (BYTE) 
+            {
                 // Skip next instruction if key with the value of register Vx is pressed
                 case 0x9E:
                     mdelay(73);
-                    if (cw->key[cw->reg_v[X]] == 1) {
+                    if (cw->key[cw->reg_v[X]] == 1)
                         cw->pc += 4;
-                    } else {
+                    else
                         cw->pc += 2;
-                    }
                 break;
 
                 // Skip next instruction if key with the value of Vx is not pressed 
                 case 0xA1:
                     mdelay(73);
-                    if (cw->key[cw->reg_v[X]] == 0) {
+                    if (cw->key[cw->reg_v[X]] == 0)
                         cw->pc += 4;
-                    } else {
+                    else
                         cw->pc += 2;
-                    }
                 break;
 
                 default:
@@ -351,7 +380,8 @@ void core_cycle(Chip_walo *cw) {
         break;
 
         case 0xF000:
-            switch (BYTE) {
+            switch (BYTE) 
+            {
                 // Set register Vx = delay timer value
                 case 0x07:
                     mdelay(45);
@@ -361,8 +391,10 @@ void core_cycle(Chip_walo *cw) {
                 
                 // Wait for a key press, store the value of the key in register Vx 
                 case 0x0A:
-                    for (u8 key = 0; key < 16; ++key) {
-                        if (cw->key[key] == 1) {
+                    for (u8 key = 0; key < 16; ++key) 
+                    {
+                        if (cw->key[key] == 1) 
+                        {
                             cw->reg_v[X] = key;
                             cw->pc += 2;
                             break;
@@ -410,18 +442,18 @@ void core_cycle(Chip_walo *cw) {
                 // Store registers V0 through Vx in memory starting at location I
                 case 0x55:
                     mdelay(605);
-                    for (u32 v = 0; v <= X; ++v) {
+                    for (u32 v = 0; v <= X; ++v)
                         cw->mem[cw->i + v] = cw->reg_v[v];
-                    }
+
                     cw->pc += 2;
                 break;
 
                 // Read registers V0 through Vx from memory starting at location I
                 case 0x65:
                     mdelay(605);
-                    for (u32 v = 0; v <= X; ++v) {
+                    for (u32 v = 0; v <= X; ++v)
                         cw->reg_v[v] = cw->mem[cw->i + v];
-                    }
+
                     cw->pc += 2;
                 break;
 
@@ -433,9 +465,12 @@ void core_cycle(Chip_walo *cw) {
     }
 
     // Update Timers
-    if (cw->dt > 0) { --cw->dt; }
-    if (cw->st > 0) {
+    if (cw->dt > 0) 
+        --cw->dt;
+
+    if (cw->st > 0) 
+    {
         --cw->st;
-        cw->audio_flag = SET_AUDIO;
+        cw->audio_flag = 1;
     }
 }

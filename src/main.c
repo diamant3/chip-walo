@@ -8,13 +8,17 @@
 #include "audio.h"
 #include "keypad.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) 
+{
     // Load Rom
-    if (argc == 2) {
+    if (argc == 2) 
+    {
         chip_walo = (Chip_walo *)malloc(sizeof(*chip_walo));
-    } else {
+    } 
+    else 
+    {
         printf("Usage: xmake run chip-walo \"PATH/OF/THE/ROM\"\n");
-        exit(SUCCESS);
+        exit(0);
     }
 
     core_init(chip_walo);
@@ -23,16 +27,19 @@ int main(int argc, char *argv[]) {
     audio_init();
 
     // cpu operation loop
-    while (1) {
+    while (1) 
+    {
         key_detect(chip_walo);
         core_cycle(chip_walo);
 
-        if (chip_walo->draw_flag == SET_DRAW) {
+        if (chip_walo->draw_flag == 1) 
+        {
             gfx_update(chip_walo);
             chip_walo->draw_flag = 0;
         }
 
-        if (chip_walo->audio_flag == SET_AUDIO) {
+        if (chip_walo->audio_flag == 1) 
+        {
             audio_beep();
             chip_walo->audio_flag = 0;
         }
