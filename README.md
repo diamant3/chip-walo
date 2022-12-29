@@ -1,7 +1,5 @@
 # chip-walo
 
-CHIP-8 Emulator using C and SDL2.
-
 ![C](https://img.shields.io/badge/Language-c-gold?style=for-the-badge)
 
 ## Introduction
