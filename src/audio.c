@@ -9,19 +9,19 @@
 
 SDL_AudioSpec *want = NULL;
 SDL_AudioDeviceID audioDevice;
-u32 sampleNR = 0;
+unsigned int sampleNR = 0;
 
 // source: https://stackoverflow.com/a/45002609
-static void audio_callback(void *user_data, u32 *raw_buffer, u32 bytes) 
+static void audio_callback(void *user_data, unsigned int *raw_buffer, unsigned int bytes) 
 {
-    u32 *buffer = raw_buffer;
-    u32 length = (u32)(bytes / 2);
-    sampleNR = *(u32 *)user_data;
+    unsigned int *buffer = raw_buffer;
+    unsigned int length = (unsigned int)(bytes / 2);
+    sampleNR = *(unsigned int *)user_data;
 
-    for (u32 data = 0; data < length; ++data, ++sampleNR) 
+    for (unsigned int data = 0; data < length; ++data, ++sampleNR) 
     {
         double_t time = (double_t)sampleNR / (double_t)AUDIO_SAMPLING_RATE;
-        buffer[data] = (u32)(AUDIO_AMPLITUDE * sin(2.0 * M_PI * 441.0 * time));
+        buffer[data] = (unsigned int)(AUDIO_AMPLITUDE * sin(2.0 * M_PI * 441.0 * time));
     }
 }
 
@@ -41,6 +41,7 @@ void audio_init(void)
         printf("[FAIL] %s \n", SDL_GetError());
         exit(0);
     }
+    printf("[SUCCESS] chip-walo Audio Initialized.\n");
 }
 
 void audio_beep(void) 
@@ -50,8 +51,9 @@ void audio_beep(void)
     SDL_PauseAudioDevice(audioDevice, 1);
 }
 
-void audio_term(void) 
+void audio_deinit(void) 
 {
     SDL_CloseAudioDevice(audioDevice);
     free(want);
+    printf("[SUCCESS] chip-walo Audio Deinitialized.\n");
 }

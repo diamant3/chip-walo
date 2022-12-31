@@ -43,7 +43,7 @@ void gfx_init(void)
     renderer = SDL_CreateRenderer(
         window,
         -1,
-        SDL_RENDERER_ACCELERATED
+        0
     );
 
     if (renderer == NULL) 
@@ -65,14 +65,16 @@ void gfx_init(void)
         printf("[FAIL] %s\n", SDL_GetError());
         exit(0);
     }
+
+    printf("[SUCCESS] chip-walo Graphics Initialized.\n");
 }
 
-void gfx_update(Chip_walo *cw) 
+void gfx_update(void) 
 {
-    u32 px_buffer[SCREEN_SIZE] = { 0 };
+    unsigned int px_buffer[SCREEN_SIZE] = { 0 };
 
-    for (u32 px = 0; px < SCREEN_SIZE; ++px)
-        px_buffer[px] = ((FG_COLOR * cw->gfx[px]) | BG_COLOR);
+    for (unsigned int px = 0; px < SCREEN_SIZE; ++px)
+        px_buffer[px] = ((FG_COLOR * chip_walo->gfx[px]) | BG_COLOR);
 
     SDL_UpdateTexture(texture, NULL, px_buffer, SCREEN_WIDTH * (sizeof(px_buffer[0])));
     SDL_RenderClear(renderer);
@@ -80,11 +82,12 @@ void gfx_update(Chip_walo *cw)
     SDL_RenderPresent(renderer);
 }
 
-void gfx_term(void) 
+void gfx_deinit(void) 
 {
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_QuitSubSystem(SDL_INIT_EVERYTHING);
     SDL_Quit();
+    printf("[SUCCESS] chip-walo graphics Deinitialized.\n");
 }

@@ -12,5 +12,5 @@
 // audio functions
 void audio_init(void);
 void audio_beep(void);
-void audio_term(void);
+void audio_deinit(void);
 #endif

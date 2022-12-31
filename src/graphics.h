@@ -6,6 +6,6 @@
 
 // graphics functions
 void gfx_init(void);
-void gfx_update(Chip_walo *cw);
-void gfx_term(void);
+void gfx_update(void);
+void gfx_deinit(void);
 #endif

@@ -6,7 +6,7 @@
 #include "keypad.h"
 
 // 16 keys corresponding to the keypad of chip-8
-u8 key_map[KEY_COUNT] = 
+unsigned char key_map[KEY_COUNT] = 
 {
     SDLK_x, SDLK_1, SDLK_2,
     SDLK_3, SDLK_q, SDLK_w,
@@ -16,33 +16,33 @@ u8 key_map[KEY_COUNT] =
     SDLK_v
 };
 
-void key_detect(Chip_walo *cw) 
+void key_detect(void)
 {
     SDL_Event event;
 
-    while (SDL_PollEvent(&event)) 
+    while (SDL_PollEvent(&event))
     {
-        if (event.type == SDL_QUIT) 
-            exit(0);
+        if (event.type == SDL_QUIT)
+            running = 0;
 
-        if (event.type == SDL_KEYDOWN) 
+        if (event.type == SDL_KEYDOWN)
         {
-            if (event.key.keysym.sym == SDLK_ESCAPE) 
-                exit(0);
+            if (event.key.keysym.sym == SDLK_ESCAPE)
+                running = 0;
 
-            for (u8 key = 0; key < KEY_COUNT; ++key) 
+            for (unsigned char key = 0; key < KEY_COUNT; ++key) 
             {
                 if (event.key.keysym.sym == key_map[key])
-                    cw -> key[key] = 1;
+                    chip_walo->key[key] = 1;
             }
         }
 
         if (event.type == SDL_KEYUP) 
         {
-            for (u8 key = 0; key < KEY_COUNT; ++key) 
+            for (unsigned char key = 0; key < KEY_COUNT; ++key) 
             {
                 if (event.key.keysym.sym == key_map[key])
-                    cw -> key[key] = 0;
+                    chip_walo->key[key] = 0;
             }
         }
     }
