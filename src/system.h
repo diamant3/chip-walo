@@ -1,6 +1,8 @@
 #ifndef _SYSTEM_H
 #define _SYSTEM_H
 
+#include<stdint.h>
+
 /* A 12-bit value, the lowest 12 bits of the instruction */
 #define ADDR (chip_walo->opcode & 0x0FFF)
 
@@ -48,19 +50,19 @@
 
 // chip-walo system struct
 typedef struct Chip_walo_t {
-    unsigned char reg_v[REGISTER_COUNT];
-    unsigned char mem[MEMORY_SIZE];
-    unsigned char gfx[SCREEN_SIZE];
-    unsigned char key[KEY_COUNT];
-    unsigned char dt;
-    unsigned char st;
-    unsigned char draw_flag;
-    unsigned char audio_flag;
-    unsigned short i;
-    unsigned short pc;
-    unsigned short opcode;
-    unsigned short stack[STACK_SIZE];
-    unsigned short sp;
+    uint8_t reg_v[REGISTER_COUNT];
+    uint8_t mem[MEMORY_SIZE];
+    uint8_t gfx[SCREEN_SIZE];
+    uint8_t key[KEY_COUNT];
+    uint8_t dt;
+    uint8_t st;
+    uint8_t draw_flag;
+    uint8_t audio_flag;
+    uint16_t i;
+    uint16_t pc;
+    uint16_t opcode;
+    uint16_t stack[STACK_SIZE];
+    uint16_t sp;
 } Chip_walo;
 Chip_walo *chip_walo;
 

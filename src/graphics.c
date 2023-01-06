@@ -17,10 +17,8 @@ SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Texture *texture = NULL;
 
-void gfx_init(void) 
-{
-    if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) 
-    {
+void gfx_init(void) {
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         printf("[FAIL] %s \n", SDL_GetError());
         exit(0);
     }
@@ -34,8 +32,7 @@ void gfx_init(void)
         SDL_WINDOW_SHOWN
     );
 
-    if (window == NULL) 
-    {
+    if (window == NULL) {
         printf("[FAIL] %s \n", SDL_GetError());
         exit(0);
     }
@@ -46,8 +43,7 @@ void gfx_init(void)
         0
     );
 
-    if (renderer == NULL) 
-    {
+    if (renderer == NULL) {
         printf("[FAIL] %s\n", SDL_GetError());
         exit(0);
     }
@@ -60,8 +56,7 @@ void gfx_init(void)
         SCREEN_HEIGHT
     );
 
-    if (texture == NULL) 
-    {
+    if (texture == NULL) {
         printf("[FAIL] %s\n", SDL_GetError());
         exit(0);
     }
@@ -69,11 +64,10 @@ void gfx_init(void)
     printf("[SUCCESS] chip-walo Graphics Initialized.\n");
 }
 
-void gfx_update(void) 
-{
-    unsigned int px_buffer[SCREEN_SIZE] = { 0 };
+void gfx_update(void) {
+    uint32_t px_buffer[SCREEN_SIZE];
 
-    for (unsigned int px = 0; px < SCREEN_SIZE; ++px)
+    for (uint32_t px = 0; px < SCREEN_SIZE; ++px)
         px_buffer[px] = ((FG_COLOR * chip_walo->gfx[px]) | BG_COLOR);
 
     SDL_UpdateTexture(texture, NULL, px_buffer, SCREEN_WIDTH * (sizeof(px_buffer[0])));
@@ -82,8 +76,7 @@ void gfx_update(void)
     SDL_RenderPresent(renderer);
 }
 
-void gfx_deinit(void) 
-{
+void gfx_deinit(void) {
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
