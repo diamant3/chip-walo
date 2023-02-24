@@ -1,5 +1,5 @@
 set_project("chip-walo")
-set_languages("clatest", "cxxlatest")
+set_languages("c99")
 set_optimize("fastest")
 
 add_packages("libsdl")
