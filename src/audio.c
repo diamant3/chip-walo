@@ -29,7 +29,7 @@ void audio_init(void) {
     want->format = AUDIO_S8;
     want->channels = 1;
     want->samples = 2048;
-    want->callback = audio_callback;
+    want->callback = (SDL_AudioCallback)audio_callback;
     want->userdata = &sampleNR;
 
     audioDevice = SDL_OpenAudioDevice(NULL, 0, want, NULL, 0);
