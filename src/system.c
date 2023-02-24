@@ -25,17 +25,7 @@ const uint8_t FONTSET[FONT_LENGTH] = {
 };
 
 uint8_t running = 1;
-
-static void delay(int32_t ms)
-{
-    int64_t pause;
-    clock_t now, then;
-
-    pause = ms * (CLOCKS_PER_SEC/1000);
-    now = then = clock();
-    while((now - then) < pause)
-        now = clock();
-}
+Chip_walo *chip_walo = NULL;
 
 void core_init(void) {
     chip_walo = (Chip_walo *)malloc(sizeof(*chip_walo));
@@ -290,9 +280,10 @@ void core_cycle(void) {
         break;
 
         // Jump to location NNN + register Vx
-        case 0xB000:
+        case 0xB000: {
             uint8_t XNN = ADDR & 0x0F00;
             chip_walo->pc = (chip_walo->reg_v[XNN] + ADDR);
+        }
         break;
 
         // Set register Vx = random byte AND byte

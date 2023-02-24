@@ -34,6 +34,8 @@ int main(int argc, char *argv[]) {
             audio_beep();
             chip_walo->audio_flag = 0;
         }
+
+        SDL_Delay(4);
     }
 
     gfx_deinit();
