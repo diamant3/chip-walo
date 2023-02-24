@@ -64,12 +64,12 @@ typedef struct Chip_walo_t {
     uint16_t stack[STACK_SIZE];
     uint16_t sp;
 } Chip_walo;
-Chip_walo *chip_walo;
+extern Chip_walo *chip_walo;
 
 void core_load(const char *rom);
 void core_cycle(void);
 void core_init(void);
 void core_deinit(void);
 
-char running;
+extern uint8_t running;
 #endif
