@@ -67,11 +67,16 @@ void gfx_init(void) {
 void gfx_update(void) {
     uint32_t px_buffer[SCREEN_SIZE];
 
-    for (uint32_t px = 0; px < SCREEN_SIZE; ++px)
+    for (uint32_t px = 0; px < SCREEN_SIZE; ++px) {
         px_buffer[px] = ((FG_COLOR * chip_walo->gfx[px]) | BG_COLOR);
+    }
 
-    SDL_UpdateTexture(texture, NULL, px_buffer, SCREEN_WIDTH * (sizeof(px_buffer[0])));
-    SDL_RenderClear(renderer);
+    SDL_UpdateTexture(texture, NULL, px_buffer, SCREEN_WIDTH * sizeof(uint32_t));
+
+    SDL_Rect fill_rect = { 0, 0, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE };
+    SDL_SetRenderDrawColor(renderer, BG_COLOR >> 24, (BG_COLOR >> 16) & 0xFF, (BG_COLOR >> 8) & 0xFF, BG_COLOR & 0xFF);
+    SDL_RenderFillRect(renderer, &fill_rect);
+
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
 }

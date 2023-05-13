@@ -1,7 +1,7 @@
 #ifndef _SYSTEM_H
 #define _SYSTEM_H
 
-#include<stdint.h>
+#include <stdint.h>
 
 /* A 12-bit value, the lowest 12 bits of the instruction */
 #define ADDR (chip_walo->opcode & 0x0FFF)

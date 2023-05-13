@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
 #include "system.h"
 
 const uint8_t FONTSET[FONT_LENGTH] = {
@@ -28,26 +27,17 @@ uint8_t running = 1;
 Chip_walo *chip_walo = NULL;
 
 void core_init(void) {
-    chip_walo = (Chip_walo *)malloc(sizeof(*chip_walo));
+    chip_walo = calloc(1, sizeof(*chip_walo));
 
     /* Generate a random seed */
-    srand((uint32_t)time(NULL));
-
-    /* Set all to zero */
-    chip_walo->i = 0;
-    chip_walo->opcode = 0;
-    chip_walo->sp = 0;
-    memset(chip_walo->mem, 0, MEMORY_SIZE);
-    memset(chip_walo->gfx, 0, SCREEN_SIZE);
-    memset(chip_walo->stack, 0, STACK_SIZE);
-    memset(chip_walo->reg_v, 0, REGISTER_COUNT);
+    srand(time(NULL));
 
     /* Load font to memory */
-    for (int idx = 0; idx < FONT_LENGTH; idx++)
-        chip_walo->mem[START_FONT_ADDRESS + idx] = FONTSET[idx];
+    memcpy(&chip_walo->mem[START_FONT_ADDRESS], FONTSET, FONT_LENGTH);
 
     /* Jump to chip-8 program's address space */
     chip_walo->pc = START_MEM_ADDRESS;
+
     printf("[SUCCESS] chip-walo Initialized.\n");
 }
 
@@ -62,35 +52,62 @@ void core_load(const char *rom) {
     uint8_t *rom_buffer = NULL;
     FILE *file = NULL;
 
-    /* Get size and allocate a ROM to buffer */
+    /* Open the file */
     file = fopen(rom, "rb");
-    if (file != NULL) {
-        fseek(file, 0, SEEK_END);
-        rom_size = ftell(file);
-        fseek(file, 0, SEEK_SET);
-        rom_buffer = (uint8_t *)malloc(rom_size * (sizeof(rom_buffer[0])));
-    } else {
-        printf("[FAIL] Can't open the file.\n");
-        exit(0);
+    if (file == NULL) {
+        printf("[ERROR] Failed to open the file.\n");
+        exit(EXIT_FAILURE);
     }
 
-    /* Check and Load the ROM to memory */
-    if (fread(rom_buffer, 1, rom_size, file) > 0) {
-        if (rom_size <= (MEMORY_SIZE - START_MEM_ADDRESS)) {
-            for (int idx = 0; idx < rom_size; idx++)
-                chip_walo->mem[START_MEM_ADDRESS + idx] = rom_buffer[idx];
-        } else {
-            printf("[FAIL] File size exceeded.\n");
-            exit(0);
-        }
-    } else {
-        printf("[FAIL] Empty file.\n");
-        exit(0);
+    /* Get the file size */
+    if (fseek(file, 0, SEEK_END) != 0) {
+        printf("[ERROR] Failed to seek to end of file.\n");
+        fclose(file);
+        exit(EXIT_FAILURE);
     }
 
+    rom_size = ftell(file);
+    if (rom_size == -1L) {
+        printf("[ERROR] Failed to get the file size.\n");
+        fclose(file);
+        exit(EXIT_FAILURE);
+    }
+
+    if (rom_size > (MEMORY_SIZE - START_FONT_ADDRESS)) {
+        printf("[ERROR] File size exceeds available memory. \n");
+        fclose(file);
+        exit(EXIT_FAILURE);
+    }
+
+    if (fseek(file, 0, SEEK_SET) != 0) {
+        printf("[ERROR] Failed to seek to beginning of file. \n");
+        fclose(file);
+        exit(EXIT_FAILURE);
+    }
+
+    /* Allocate memory for the ROM buffer */
+    rom_buffer = malloc(rom_size);
+    if (rom_buffer == NULL) {
+        printf("[ERROR] Failed to allocate memory for ROM buffer. \n");
+        fclose(file);
+        exit(EXIT_FAILURE);
+    }
+
+    /* Read the file into the ROM buffer */
+    if (fread(rom_buffer, 1, rom_size, file) != rom_size) {
+        printf("[ERROR] Failed to read ROM data from file. \n");
+        fclose(file);
+        free(rom_buffer);
+        exit(EXIT_FAILURE);
+    }
+
+    /* Copy the ROM data to the Chip-8 memory */
+    memcpy(&chip_walo->mem[START_MEM_ADDRESS], rom_buffer, rom_size);
+
+    /* Clean up and print success message */
     free(rom_buffer);
     fclose(file);
-    printf("[SUCCESS] ROM loaded.\n");
+    printf("[SUCCESS] ROM loaded. \n");
 }
 
 void core_cycle(void) {

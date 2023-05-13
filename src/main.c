@@ -1,8 +1,5 @@
 #include <SDL2/SDL.h>
-
 #include <stdio.h>
-#include <stdlib.h>
-
 #include "system.h"
 #include "graphics.h"
 #include "audio.h"
@@ -21,6 +18,7 @@ int main(int argc, char *argv[]) {
     }
 
     // cpu operation loop
+    uint32_t prev_time = SDL_GetTicks();
     while (running) {
         key_detect();
         core_cycle();
@@ -35,7 +33,12 @@ int main(int argc, char *argv[]) {
             chip_walo->audio_flag = 0;
         }
 
-        SDL_Delay(4);
+        uint32_t curr_time = SDL_GetTicks();
+        uint32_t elapsed_time = curr_time - prev_time;
+        if (elapsed_time < 4) {
+            SDL_Delay(4 - elapsed_time);
+        }
+        prev_time = curr_time;
     }
 
     gfx_deinit();

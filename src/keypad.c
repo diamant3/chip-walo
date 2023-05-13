@@ -1,11 +1,9 @@
 #include <SDL2/SDL.h>
-
 #include <stdio.h>
-
 #include "system.h"
 #include "keypad.h"
 
-// 16 keys corresponding to the keypad of chip-8
+/* 16 keys corresponding to the keypad of chip-8 */
 uint8_t key_map[KEY_COUNT] = 
 {
     SDLK_x, SDLK_1, SDLK_2,
