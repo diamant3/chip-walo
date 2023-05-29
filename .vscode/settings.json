@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "system.h": "c",
-        "graphics.h": "c",
-        "keypad.h": "c",
-        "audio.h": "c",
-        "stdint.h": "c"
-    }
-}
