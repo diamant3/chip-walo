@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "chip_walo.h"
 #include "opcodes.h"
@@ -193,6 +194,7 @@ void oc_bxnn(void)
 
 void oc_cxnn(void) 
 {
+    srand((unsigned int)time(NULL));
     const unsigned char random = (rand() % 0xff);
     chip_walo->reg_v[X] = (random & BYTE);
     chip_walo->pc += 2;

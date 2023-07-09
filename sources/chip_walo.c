@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
 
 #include "chip_walo.h"
 #include "opcodes.h"
@@ -35,7 +34,6 @@ void CW_init(void)
         return;
     }
 
-    srand((unsigned int)time(NULL));
     for (int font = 0; font < FONT_SZ; font++) { chip_walo->mem[FONT_START_ADDR + font] = FONTSET[font]; }
     chip_walo->pc = MEM_START_ADDR;
 
