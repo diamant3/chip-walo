@@ -25,12 +25,12 @@ static const unsigned char FONTSET[FONT_SZ] =
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
-void (*oc_handlers[0x10000])(void) = { &oc_null };
+void (*oc_handlers[0x10000])(void);
 Chip_walo *chip_walo = NULL;
 
 void CW_init(void) 
 {
-    chip_walo = calloc(1, sizeof(*chip_walo));
+    chip_walo = calloc(13, sizeof(Chip_walo));
     if (chip_walo == NULL) {
         return;
     }
