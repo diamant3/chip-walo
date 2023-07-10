@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #include "chip_walo.h"
 #include "opcodes.h"
@@ -12,6 +13,7 @@ void oc_null(void)
 
 void oc_00e0(void)
 {
+    memset(&chip_walo->gfx, 0, SCR_SZ);
     chip_walo->draw_flag = 1;
     chip_walo->pc += 2;
 }
@@ -95,7 +97,7 @@ static void oc_8xy3(void)
 
 static void oc_8xy4(void)
 {
-    unsigned short result = chip_walo->reg_v[X] + chip_walo->reg_v[Y];
+    int result = chip_walo->reg_v[X] + chip_walo->reg_v[Y];
     if (result > 0xff) { chip_walo->reg_v[0xf] = 1; }
     else { chip_walo->reg_v[0xf] = 0; }
 
@@ -133,7 +135,7 @@ static void oc_8xy7(void)
 
 static void oc_8xye(void)
 {
-    unsigned char result = (chip_walo->reg_v[X] << 7) & 1;
+    unsigned char result = (chip_walo->reg_v[X] & 0x80) >> 0x7;
     chip_walo->reg_v[X] <<= 1;
     chip_walo->reg_v[0xf] = result;
     chip_walo->pc += 2;    
@@ -188,14 +190,14 @@ void oc_annn(void)
 
 void oc_bxnn(void) 
 {
-    const unsigned char XNN = (unsigned char)(ADDR & 0x0F00);
+    unsigned char XNN = (unsigned char)(ADDR & 0x0F00);
     chip_walo->pc = (chip_walo->reg_v[XNN] + ADDR);
 }
 
 void oc_cxnn(void) 
 {
     srand((unsigned int)time(NULL));
-    const unsigned char random = (rand() % 0xff);
+    unsigned char random = (rand() % 0xff);
     chip_walo->reg_v[X] = (random & BYTE);
     chip_walo->pc += 2;
 }
@@ -205,12 +207,14 @@ void oc_dxyn(void)
     const unsigned char XX = chip_walo->reg_v[X] % SCR_W;
     const unsigned char YY = chip_walo->reg_v[Y] % SCR_H;
     const unsigned char H = NIBBLE;
+    unsigned char px = 0;
+    chip_walo->reg_v[0xf] = 0;
 
-    for (unsigned char yline = 0; yline < H; yline++)
+    for (int yline = 0; yline < H; yline++)
     {
         if ((YY + yline) >= SCR_H) { break; }
-        const unsigned char px = chip_walo->mem[chip_walo->i + yline];
-        for (unsigned char xline = 0; xline < 8; xline++)
+        px = chip_walo->mem[chip_walo->i + yline];
+        for (int xline = 0; xline < 8; xline++)
         {
             if ((XX + xline) >= SCR_W) { break; }
 
@@ -251,7 +255,7 @@ static void oc_fx07(void)
 
 static void oc_fx0a(void)
 {
-    for (unsigned char key = 0; key < 16; key++) 
+    for (int key = 0; key < 16; key++) 
     {
         if (chip_walo->key[key] == 1) {
             chip_walo->reg_v[X] = key;
@@ -288,28 +292,27 @@ static void oc_fx29(void)
 static void oc_fx33(void)
 {
     chip_walo->mem[chip_walo->i] = (chip_walo->reg_v[X] / 100);
-    chip_walo->mem[chip_walo->i + 1] = (chip_walo->reg_v[X] / 10) % 10;
-    chip_walo->mem[chip_walo->i + 2] = (chip_walo->reg_v[X] % 100) % 10;
+    chip_walo->mem[chip_walo->i + 1] = ((chip_walo->reg_v[X] / 100) % 10);
+    chip_walo->mem[chip_walo->i + 2] = (chip_walo->reg_v[X] % 10);
     chip_walo->pc += 2;
 }
 
 static void oc_fx55(void)
 {
-    for (unsigned char v = 0; v < X; v++) 
+    for (int v = 0; v <= X; v++) 
     {
-        chip_walo->i++;
         chip_walo->mem[chip_walo->i + v] = chip_walo->reg_v[v];
+        chip_walo->i += v;
     }
-
     chip_walo->pc += 2;
 }
 
 static void oc_fx65(void)
 {
-    for (unsigned char v = 0; v < X; v++)
+    for (int v = 0; v <= X; v++)
     {
-        chip_walo->i++;
         chip_walo->reg_v[v] = chip_walo->mem[chip_walo->i + v];
+        chip_walo->i += v;
     }
 
     chip_walo->pc += 2;
