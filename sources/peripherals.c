@@ -83,7 +83,7 @@ void CW_gfx_out(void)
     static const unsigned char B = (BG_COLOR >> 8) & 0xff;
     static const unsigned char A = BG_COLOR & 0xff;
 
-    for (unsigned int px = 0; px < SCR_SZ; px++)
+    for (int px = 0; px < SCR_SZ; px++)
     {
         px_buf[px] = ((FG_COLOR * chip_walo->gfx[px]) | BG_COLOR);
     }

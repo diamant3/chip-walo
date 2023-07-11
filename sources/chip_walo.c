@@ -24,71 +24,18 @@ static const unsigned char FONTSET[FONT_SZ] =
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
-void (*oc_handlers[0x10000])(void);
 Chip_walo *chip_walo = NULL;
 
 void CW_init(void) 
 {
-    chip_walo = calloc(13, sizeof(Chip_walo));
+    chip_walo = calloc(13, sizeof(*chip_walo));
     if (chip_walo == NULL) {
         return;
     }
 
-    for (int font = 0; font < FONT_SZ; font++) { chip_walo->mem[FONT_START_ADDR + font] = FONTSET[font]; }
+    srand((unsigned int)time(NULL));
+    for (unsigned char font = 0; font < FONT_SZ; font++) { chip_walo->mem[font] = FONTSET[font]; }
     chip_walo->pc = MEM_START_ADDR;
-
-    // Set array of all function pointers to null(it means unknown opcode)
-    for (int a = 0x0000; a <= 0x10000; a++) { oc_handlers[a] = &oc_null; }
-
-    // opcode 0
-    oc_handlers[0x00e0] = &oc_00e0;
-    oc_handlers[0x00ee] = &oc_00ee;
-
-    // opcode 1
-    for (int a = 0x1000; a <= 0x1fff; a++) { oc_handlers[a] = &oc_1nnn; }
-
-    // opcode 2
-    for (int a = 0x2000; a <= 0x2fff; a++) { oc_handlers[a] = &oc_2nnn; }
-
-    // opcode 3
-    for (int a = 0x3000; a <= 0x3fff; a++) { oc_handlers[a] = &oc_3xnn; }
-
-    // opcode 4
-    for (int a = 0x4000; a <= 0x4fff; a++) { oc_handlers[a] = &oc_4xnn; }
-
-    // opcode 5
-    for (int a = 0x5000; a <= 0x5ff0; a++) { oc_handlers[a] = &oc_5xy0; }
-
-    // opcode 6
-    for (int a = 0x6000; a <= 0x6fff; a++) { oc_handlers[a] = &oc_6xnn; }
-
-    // opcode 7
-    for (int a = 0x7000; a <= 0x7fff; a++) { oc_handlers[a] = &oc_7xnn; }
-
-    // opcode 8
-    for (int a = 0x8000; a <= 0x8ffe; a++) { oc_handlers[a] = &oc_8xyz; }
-
-    // opcode 9
-    for (int a = 0x9000; a <= 0x9ff0; a++) { oc_handlers[a] = &oc_9xy0; }
-
-    // opcode A
-    for (int a = 0xa000; a <= 0xafff; a++) { oc_handlers[a] = &oc_annn; }
-
-    // opcode B
-    for (int a = 0xb000; a <= 0xbfff; a++) { oc_handlers[a] = &oc_bxnn; }
-
-    // opcode C
-    for (int a = 0xc000; a <= 0xcfff; a++) { oc_handlers[a] = &oc_cxnn; }
-
-    // opcode D
-    for (int a = 0xd000; a <= 0xdfff; a++) { oc_handlers[a] = &oc_dxyn; }
-
-    // opcode E
-    for (int a = 0xe09e; a <= 0xef9e; a++) { oc_handlers[a] = &oc_ex9e; }
-    for (int a = 0xef9f; a <= 0xefa1; a++) { oc_handlers[a] = &oc_exa1; }
-
-    // opcode F
-    for (int a = 0xf007; a <= 0xff65; a++) { oc_handlers[a] = &oc_fxzz; }    
 }
 
 void CW_deinit(void) 
@@ -118,7 +65,7 @@ int CW_loadrom(const char *rom)
         return -1; 
     }
 
-    if (rom_sz > (MEM_SZ - FONT_START_ADDR)) 
+    if (rom_sz >= (MEM_SZ - MEM_START_ADDR)) 
     { 
         fclose(file); 
         return -1;
@@ -154,8 +101,8 @@ int CW_loadrom(const char *rom)
 void CW_cycle(void) 
 {
     chip_walo->opcode = (chip_walo->mem[chip_walo->pc] << 8) | chip_walo->mem[chip_walo->pc + 1];
-    // printf("[STATE][OPCODE] 0x%x\n", chip_walo->opcode);
-    oc_handlers[chip_walo->opcode]();
+    printf("[STATE][OPCODE] 0x%x\n", (chip_walo->opcode));
+    oc_exec();
 
     if (chip_walo->dt > 0) { chip_walo->dt--; }
     if (chip_walo->st > 0) 
@@ -164,17 +111,3 @@ void CW_cycle(void)
         chip_walo->audio_flag = 1;
     }
 }
-
-/*
-int main(int argc, char *argv[]) {
-    CW_init();
-    if (argc != 2) { return -1; }
-    CW_loadrom(argv[1]);
-    while (1) {
-        CW_cycle();
-        printf("opcode: %x \n", chip_walo->opcode);
-    }
-
-    CW_deinit();
-    return 0;
-}*/

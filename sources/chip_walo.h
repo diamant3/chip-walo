@@ -18,7 +18,6 @@
 #define MEM_START_ADDR  512
 #define REG_SZ          16
 #define KEY_SZ          16
-#define FONT_START_ADDR 80
 
 typedef struct Chip_walo_t {
     unsigned char reg_v[REG_SZ];
