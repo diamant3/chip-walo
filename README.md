@@ -1,7 +1,5 @@
 # chip-walo
 
-![C](https://img.shields.io/badge/Language-c-gold?style=for-the-badge)
-
 ## Introduction
 
 CHIP-8 is an interpreted programming language which was initially used in the late 1970s.
@@ -23,57 +21,35 @@ Reference: [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 
 ## Building
 
-### Linux
-
-Required:
-- gcc
-- unzip/7zip
-- [xmake](https://xmake.io/#/guide/installation)
-
 Download the repo:
 
 ```bash
 git clone https://github.com/diamant3/chip-walo.git
 ```
 
+Requirements:
+
+- CMake
+- vcpkg
+- SDL2
+
 build chip-walo:
 
 ```bash
-cd chip-walo && xmake
+mkdir build
+cd build
+cmake ..
+cmake --build .
 ```
 
-### Windows
-
-Required:
-
-- [scoop](https://scoop.sh/)
-- visual studio(MSVC)
-
-SDL2 Installation using scoop:
-
-```cmd
-scoop bucket add extras
-scoop install sdl2
-```
-
-Download the repo:
-
-```cmd
-git clone https://github.com/diamant3/chip-walo.git
-```
-
-build chip-walo:
-
-```cmd
-cd chip-walo && xmake
-```
+> For Windows User, Type `vcpkg integrate install` and then build it using `-DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake` or path to the cmake of vcpkg.
 
 ## Usage
 
 ### Run
 
-```
-xmake run chip-walo PATH/OF/THE/ROM
+```bash
+.\Debug\chip-walo "PATH OF THE ROM"
 ```
 
 ### Input
