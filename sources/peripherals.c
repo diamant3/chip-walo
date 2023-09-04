@@ -30,7 +30,7 @@ void CW_gfx_init(void)
     if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
     {
         printf("[SDL INIT STATUS] %s\n", SDL_GetError());
-        return -1;
+        return;
     }
 
     win = SDL_CreateWindow(
@@ -44,7 +44,7 @@ void CW_gfx_init(void)
     if (win == NULL) 
     {
         printf("[WINDOW STATUS] %s\n", SDL_GetError());
-        return -1;
+        return;
     }
 
     rdr = SDL_CreateRenderer(
@@ -55,7 +55,7 @@ void CW_gfx_init(void)
     if (rdr == NULL) 
     {
         printf("[RENDERER STATUS] %s\n", SDL_GetError());
-        return -1;
+        return;
     }
 
     txr = SDL_CreateTexture(
@@ -68,7 +68,7 @@ void CW_gfx_init(void)
     if (txr == NULL) 
     {
         printf("[TEXTURE STATUS] %s\n", SDL_GetError());
-        return -1;
+        return;
     }
 
     printf("[STATE] Graphics Initialized.\n");
@@ -108,14 +108,14 @@ void CW_gfx_deinit(void)
 static void audio_cb(void *userdata, unsigned short *raw_buf, int bytes)
 {
     unsigned int len = (unsigned int)(bytes / 2);
-    unsigned int start_sample = (unsigned int)userdata;
+    unsigned long long start_sample = (unsigned long long)userdata;
     double sample_timestep = 1.0f / AUDIO_SAMPLING_RATE;
-    double current_time = start_sample / AUDIO_SAMPLING_RATE;
+    unsigned long long current_time = start_sample / AUDIO_SAMPLING_RATE;
 
     for (unsigned int w = 0; w < len; w++)
     {
         raw_buf[w] = (unsigned short)(AUDIO_AMPLITUDE * sin(2.0f * M_PI * 441.0f * current_time));
-        current_time += sample_timestep;
+        current_time += (unsigned long long)sample_timestep;
     }
 
     *(unsigned int *)userdata += len;
@@ -134,7 +134,7 @@ void CW_audio_init(void)
     if (dev == 0)
     {
         printf("[STATUS] %s\n", SDL_GetError());
-        return -1;
+        return;
     }
 
     printf("[STATE] Audio Initialized.\n");

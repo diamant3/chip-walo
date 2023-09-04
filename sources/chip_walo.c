@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "chip_walo.h"
 #include "opcodes.h"
@@ -59,7 +60,7 @@ int CW_loadrom(const char *rom)
     }
 
     rom_sz = ftell(file);
-    if (rom_sz == -1llu) 
+    if (rom_sz == -1) 
     { 
         fclose(file); 
         return -1; 
