@@ -42,7 +42,7 @@ cmake ..
 cmake --build .
 ```
 
-> For Windows User, Type `vcpkg integrate install` and then build it using `-DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake` or path to the cmake of vcpkg.
+> For Windows User, Type `vcpkg integrate install` and then build it using `-DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake` or path to the toolchain file of vcpkg.
 
 ## Usage
 
